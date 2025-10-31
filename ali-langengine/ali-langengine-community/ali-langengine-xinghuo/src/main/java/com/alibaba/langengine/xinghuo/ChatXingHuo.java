@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +40,16 @@ import java.util.function.Consumer;
 @Slf4j
 @Data
 public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
+    
+    /**
+     * 默认最大token数
+     */
+    private static final int DEFAULT_MAX_TOKENS = 2048;
+    
+    /**
+     * 默认温度
+     */
+    private static final double DEFAULT_TEMPERATURE = 0.5;
 
     @Override
     public String run(String prompt, List<String> stops, Consumer<String> consumer, Map<String, Object> extraAttributes) {
@@ -46,7 +57,12 @@ public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
         try {
             socketListener.createWebSocket();
             String sessionId = UUID.randomUUID().toString().replace("-", "");
-            socketListener.sendMsg(socketListener.webSocket, sessionId, getMaxTokens(), getTemperature(), prompt);
+            
+            // 处理可能为null的maxTokens和temperature
+            int maxTokens = getMaxTokens() != null ? getMaxTokens() : DEFAULT_MAX_TOKENS;
+            double temperature = getTemperature() != null ? getTemperature() : DEFAULT_TEMPERATURE;
+            
+            socketListener.sendMsg(socketListener.webSocket, sessionId, maxTokens, temperature, prompt);
             // 等待服务端返回完毕后关闭
             while (true) {
                 Thread.sleep(200);
@@ -54,7 +70,7 @@ public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
                     break;
                 }
             }
-            socketListener.getWebSocket().close(1000, "");
+            socketListener.getWebSocket().close(1000, "完成");
 
             String message = socketListener.getAnswer();
             if (StringUtils.isNotBlank(message)) {
@@ -71,8 +87,8 @@ public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
 
             return message;
         } catch (Throwable throwable) {
-            //临时后期需要处理
-            return "";
+            log.error("调用星火大模型异常", throwable);
+            throw new RuntimeException("调用星火大模型异常", throwable);
         }
     }
 

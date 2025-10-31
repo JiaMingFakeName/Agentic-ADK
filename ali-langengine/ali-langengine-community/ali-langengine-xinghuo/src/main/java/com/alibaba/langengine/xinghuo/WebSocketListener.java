@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -35,6 +36,7 @@ import java.util.function.Consumer;
  * @author liuchunhe.lch on 2023/9/10 18:55
  * well-meaning people get together do meaningful things
  **/
+@Slf4j
 @Data
 public class WebSocketListener extends okhttp3.WebSocketListener {
     public static final Gson json = new Gson();
@@ -48,6 +50,7 @@ public class WebSocketListener extends okhttp3.WebSocketListener {
     public WebSocketListener(Consumer<String> consumer) {
         setConsumer(consumer);
     }
+    
     public void createWebSocket() throws InterruptedException {
         try {
             if (webSocket == null) {
@@ -59,8 +62,11 @@ public class WebSocketListener extends okhttp3.WebSocketListener {
                 webSocket = okHttpClient.newWebSocket(request, this);
             }
         } catch (Exception e) {
+            log.error("创建WebSocket连接失败", e);
+            throw new RuntimeException("创建WebSocket连接失败", e);
         }
     }
+    
     /**
      * 对url进行鉴权
      *
@@ -100,6 +106,7 @@ public class WebSocketListener extends okhttp3.WebSocketListener {
                 build();
         return httpUrl.toString();
     }
+    
     public void sendMsg(WebSocket webSocket, String uid, int maxTokens,double temperature, String question) {
         JsonObject frame = new JsonObject();
         JsonObject header = new JsonObject();
@@ -130,6 +137,7 @@ public class WebSocketListener extends okhttp3.WebSocketListener {
         frame.add("payload", payload);
         webSocket.send(frame.toString());
     }
+    
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
@@ -140,77 +148,90 @@ public class WebSocketListener extends okhttp3.WebSocketListener {
                 JsonArray temp = (JsonArray) pl.getChoices().get("text");
                 JsonObject jo = (JsonObject) temp.get(0);
                 answer += jo.get("content").getAsString();
+                if (consumer != null) {
+                    consumer.accept(jo.get("content").getAsString());
+                }
             } else {
                 Payload pl1 = json.fromJson(responseData.getPayload(), Payload.class);
                 JsonObject jsonObject = (JsonObject) pl1.getUsage().get("text");
                 JsonArray temp1 = (JsonArray) pl1.getChoices().get("text");
                 JsonObject jo = (JsonObject) temp1.get(0);
                 answer += jo.get("content").getAsString();
+                if (consumer != null) {
+                    consumer.accept(jo.get("content").getAsString());
+                }
                 wsCloseFlag = true;
             }
         } else {
-            System.out.println("返回结果错误：\n" + responseData.getHeader().get("code") + responseData.getHeader().get("message"));
+            String errorMsg = "返回结果错误：\n" + responseData.getHeader().get("code") + responseData.getHeader().get("message");
+            log.error(errorMsg);
+            if (consumer != null) {
+                consumer.accept(errorMsg);
+            }
         }
     }
+    
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
+        log.info("WebSocket连接已打开");
     }
+    
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
-        System.out.println(response);
+        log.error("WebSocket连接失败: {}", response, t);
+        if (consumer != null) {
+            consumer.accept("连接失败: " + t.getMessage());
+        }
     }
-    class ResponseData {
+    
+    @Override
+    public void onClosed(WebSocket webSocket, int code, String reason) {
+        super.onClosed(webSocket, code, reason);
+        log.info("WebSocket连接已关闭，code: {}, reason: {}", code, reason);
+        wsCloseFlag = true;
+    }
+    
+    static class ResponseData {
         private JsonObject header;
         private JsonObject payload;
+        
         public JsonObject getHeader() {
             return header;
         }
+        
+        public void setHeader(JsonObject header) {
+            this.header = header;
+        }
+        
         public JsonObject getPayload() {
             return payload;
         }
-    }
-    class Header {
-        private int code;
-        private String message;
-        private String sid;
-        private String status;
-        public int getCode() {
-            return code;
-        }
-        public String getMessage() {
-            return message;
-        }
-        public String getSid() {
-            return sid;
-        }
-        public String getStatus() {
-            return status;
+        
+        public void setPayload(JsonObject payload) {
+            this.payload = payload;
         }
     }
-    class Payload {
+    
+    static class Payload {
         private JsonObject choices;
         private JsonObject usage;
+        
         public JsonObject getChoices() {
             return choices;
         }
+        
+        public void setChoices(JsonObject choices) {
+            this.choices = choices;
+        }
+        
         public JsonObject getUsage() {
             return usage;
         }
-    }
-    class Choices {
-        private int status;
-        private int seq;
-        private JsonArray text;
-        public int getStatus() {
-            return status;
-        }
-        public int getSeq() {
-            return seq;
-        }
-        public JsonArray getText() {
-            return text;
+        
+        public void setUsage(JsonObject usage) {
+            this.usage = usage;
         }
     }
 }
