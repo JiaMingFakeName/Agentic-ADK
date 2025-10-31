@@ -39,7 +39,17 @@ import java.util.function.Consumer;
  **/
 @Slf4j
 @Data
-public class ChatXingHuo extends BaseLLM {
+public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
+    
+    /**
+     * 默认最大token数
+     */
+    private static final int DEFAULT_MAX_TOKENS = 2048;
+    
+    /**
+     * 默认温度
+     */
+    private static final double DEFAULT_TEMPERATURE = 0.5;
 
     @Override
     public String run(String prompt, List<String> stops, Consumer<String> consumer, Map<String, Object> extraAttributes) {
@@ -47,7 +57,12 @@ public class ChatXingHuo extends BaseLLM {
         try {
             socketListener.createWebSocket();
             String sessionId = UUID.randomUUID().toString().replace("-", "");
-            socketListener.sendMsg(socketListener.webSocket, sessionId, getMaxTokens(), getTemperature(), prompt);
+            
+            // 处理可能为null的maxTokens和temperature
+            int maxTokens = getMaxTokens() != null ? getMaxTokens() : DEFAULT_MAX_TOKENS;
+            double temperature = getTemperature() != null ? getTemperature() : DEFAULT_TEMPERATURE;
+            
+            socketListener.sendMsg(socketListener.webSocket, sessionId, maxTokens, temperature, prompt);
             // 等待服务端返回完毕后关闭
             while (true) {
                 Thread.sleep(200);

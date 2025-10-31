@@ -24,6 +24,8 @@ import com.alibaba.langengine.core.agent.structured.StructuredChatOutputParser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,10 +70,13 @@ public class ChatXingHuoStructuredChatOutputParser extends StructuredChatOutputP
         }
     }
     
-    private AgentFinish getAgentFinish(String finalAnswer) {
+    @Override
+    public AgentFinish getAgentFinish(String text) {
+        Map<String, Object> returnValues = new HashMap<>();
+        returnValues.put("output", text);
         AgentFinish agentFinish = new AgentFinish();
-        agentFinish.setReturnValues(finalAnswer);
-        agentFinish.setLog(finalAnswer);
+        agentFinish.setReturnValues(returnValues);
+        agentFinish.setLog(text);
         return agentFinish;
     }
 }
