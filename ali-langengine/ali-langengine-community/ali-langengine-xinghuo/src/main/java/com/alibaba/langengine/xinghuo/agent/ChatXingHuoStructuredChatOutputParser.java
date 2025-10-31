@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.langengine.core.agent.AgentAction;
+import com.alibaba.langengine.core.agent.AgentFinish;
 import com.alibaba.langengine.core.agent.structured.StructuredChatOutputParser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -45,15 +46,15 @@ public class ChatXingHuoStructuredChatOutputParser extends StructuredChatOutputP
                     .replaceAll("\\}\\}\\}", "}");
             Object response = JSON.parse(actionInput);
             if(response instanceof JSONArray) {
-                log.warn("Got multiple action responses: %s", response);
+                log.warn("Got multiple action responses: {}", response);
                 response = ((JSONArray) response).get(0);
             }
             if(!(response instanceof JSONObject)) {
                 return getAgentFinish(text);
             }
             JSONObject responseObj = (JSONObject) response;
-            if(responseObj.get("action").toString() != null &&
-                    responseObj.get("action").toString().indexOf(FINAL_ANSWER_ACTION) >= 0) {
+            if(responseObj.get("action") != null &&
+                    responseObj.get("action").toString().contains(FINAL_ANSWER_ACTION)) {
                 String finalAnswer = responseObj.get("action_input").toString();
                 return getAgentFinish(finalAnswer);
             }
@@ -65,5 +66,12 @@ public class ChatXingHuoStructuredChatOutputParser extends StructuredChatOutputP
         } else {
             return getAgentFinish(text);
         }
+    }
+    
+    private AgentFinish getAgentFinish(String finalAnswer) {
+        AgentFinish agentFinish = new AgentFinish();
+        agentFinish.setReturnValues(finalAnswer);
+        agentFinish.setLog(finalAnswer);
+        return agentFinish;
     }
 }

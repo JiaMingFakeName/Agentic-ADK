@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +39,7 @@ import java.util.function.Consumer;
  **/
 @Slf4j
 @Data
-public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
+public class ChatXingHuo extends BaseLLM {
 
     @Override
     public String run(String prompt, List<String> stops, Consumer<String> consumer, Map<String, Object> extraAttributes) {
@@ -54,7 +55,7 @@ public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
                     break;
                 }
             }
-            socketListener.getWebSocket().close(1000, "");
+            socketListener.getWebSocket().close(1000, "完成");
 
             String message = socketListener.getAnswer();
             if (StringUtils.isNotBlank(message)) {
@@ -71,8 +72,8 @@ public class ChatXingHuo extends BaseLLM<ChatCompletionRequest> {
 
             return message;
         } catch (Throwable throwable) {
-            //临时后期需要处理
-            return "";
+            log.error("调用星火大模型异常", throwable);
+            throw new RuntimeException("调用星火大模型异常", throwable);
         }
     }
 
