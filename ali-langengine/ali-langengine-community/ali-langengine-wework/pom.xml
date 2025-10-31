@@ -11,6 +11,8 @@
     </parent>
 
     <artifactId>ali-langengine-wework</artifactId>
+    <packaging>jar</packaging>
+    <name>ali-langengine-wework</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

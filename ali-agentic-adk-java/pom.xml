@@ -3,60 +3,50 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.taobao</groupId>
-		<artifactId>parent</artifactId>
-		<version>2.0.0</version>
-		<relativePath/>
-	</parent>
-
 	<groupId>com.alibaba</groupId>
 	<artifactId>ali-agentic-adk</artifactId>
 	<version>1.2.6-202508111516</version>
 	<packaging>pom</packaging>
 	<name>ali-agentic-adk</name>
 	<description>Alibaba Agent Development Kit is an AI application development framework written in Java.</description>
-<!--	<url>https://github.com/AIDC-AI/Agentic-ADK</url>-->
+	<url>https://github.com/AIDC-AI/Agentic-ADK</url>
 
-<!--	<scm>-->
-<!--		<url>https://github.com/AIDC-AI/Agentic-ADK</url>-->
-<!--		<connection>scm:git:https://git@github.com/AIDC-AI/Agentic-ADK.git</connection>-->
-<!--	</scm>-->
+	<scm>
+		<url>https://github.com/AIDC-AI/Agentic-ADK</url>
+		<connection>scm:git:https://git@github.com/AIDC-AI/Agentic-ADK.git</connection>
+	</scm>
 
-<!--	<licenses>-->
-<!--		<license>-->
-<!--			<name>Apache 2.0</name>-->
-<!--			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>-->
-<!--			<distribution>repo</distribution>-->
-<!--		</license>-->
-<!--	</licenses>-->
+	<licenses>
+		<license>
+			<name>Apache 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-<!--	<developers>-->
-<!--		<developer>-->
-<!--			<id>sunleepy</id>-->
-<!--			<name>sunleepy</name>-->
-<!--			<email>sunleepy@gmail.com</email>-->
-<!--			<organizationUrl>https://alibaba.com</organizationUrl>-->
-<!--		</developer>-->
-<!--	</developers>-->
+	<developers>
+		<developer>
+			<id>sunleepy</id>
+			<name>sunleepy</name>
+			<email>sunleepy@gmail.com</email>
+			<organizationUrl>https://alibaba.com</organizationUrl>
+		</developer>
+	</developers>
 
-<!--	<distributionManagement>-->
-<!--		<snapshotRepository>-->
-<!--			<id>ossrh</id>-->
-<!--			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--		</snapshotRepository>-->
-<!--		<repository>-->
-<!--			<id>ossrh</id>-->
-<!--			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-<!--		</repository>-->
-<!--	</distributionManagement>-->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>8</maven.compiler.source>
-		<maven.compiler.target>8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco-plugin.version>0.8.8</jacoco-plugin.version>
@@ -64,13 +54,13 @@
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<spring-boot.version>2.5.12</spring-boot.version>
 		<springframework.version>5.3.31</springframework.version>
-		<junit5.version>5.11.0</junit5.version>
+		<junit5.version>5.11.2</junit5.version>
 		<!-- overridden by submodule that need skip deploy -->
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<root.basedir>${project.basedir}</root.basedir>
 		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
-		<ali-agentic-adk.version>0.1.0</ali-agentic-adk.version>
+		<ali-agentic-adk.version>1.2.6-202508111516</ali-agentic-adk.version>
 	</properties>
 
 	<modules>
@@ -79,431 +69,7 @@
         <module>ali-agentic-adk-extension/ali-agentic-adk-computer-use</module>
 
 	</modules>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+<!--	<dependencyManagement>-->
 
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.17.0</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.4</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.junit</groupId>
-				<artifactId>junit-bom</artifactId>
-				<type>pom</type>
-				<version>${junit5.version}</version>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-all</artifactId>
-				<version>1.10.19</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.spockframework</groupId>
-				<artifactId>spock-core</artifactId>
-				<version>2.4-M4-groovy-4.0</version>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.18.34</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-				<version>1.2.83</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.10</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>4.5.13</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpmime</artifactId>
-				<version>4.4</version>
-			</dependency>
-
-			<!-- unit test start -->
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>3.3.3</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.powermock</groupId>
-				<artifactId>powermock-module-junit4</artifactId>
-				<version>2.0.9</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.powermock</groupId>
-				<artifactId>powermock-api-mockito2</artifactId>
-				<version>2.0.9</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- unit test end -->
-
-			<!-- retrofit start -->
-			<!-- core used -->
-			<dependency>
-				<groupId>com.squareup.retrofit2</groupId>
-				<artifactId>retrofit</artifactId>
-				<version>2.9.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.squareup.retrofit2</groupId>
-				<artifactId>adapter-rxjava2</artifactId>
-				<version>2.9.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.squareup.retrofit2</groupId>
-				<artifactId>converter-jackson</artifactId>
-				<version>2.9.0</version>
-			</dependency>
-			<!-- retrofit end -->
-
-			<!-- okhttp3 start -->
-			<!-- core used -->
-			<dependency>
-				<groupId>com.squareup.okhttp3</groupId>
-				<artifactId>okhttp</artifactId>
-				<version>4.11.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.squareup.okhttp3</groupId>
-				<artifactId>okhttp-sse</artifactId>
-				<version>4.11.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.squareup.okhttp3</groupId>
-				<artifactId>logging-interceptor</artifactId>
-				<version>4.11.0</version>
-			</dependency>
-			<!-- okhttp3 end -->
-
-			<!-- guava localcache start -->
-			<!-- core userd -->
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>32.0.0-android</version>
-			</dependency>
-			<!-- guava localcache end -->
-
-			<!-- websocket start -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-websocket</artifactId>
-				<version>2.5.12</version>
-			</dependency>
-			<!-- websocket end -->
-
-			<!-- chatopenai stream防止冲突问题解决 start -->
-			<!-- core used -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>2.10.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-core</artifactId>
-				<version>2.10.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>2.12.7.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.module</groupId>
-				<artifactId>jackson-module-jsonSchema</artifactId>
-				<version>2.10.1</version>
-			</dependency>
-			<!-- chatopenai stream防止冲突问题解决 end -->
-
-			<!-- Request Chain需要 -->
-			<!-- core used -->
-			<dependency>
-				<groupId>org.jsoup</groupId>
-				<artifactId>jsoup</artifactId>
-				<version>1.16.1</version>
-			</dependency>
-			<!-- Request Chain需要 -->
-
-			<!-- log4j排除 start -->
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>99.0-does-not-exist</version>
-			</dependency>
-<!--			<dependency>-->
-<!--				<groupId>org.apache.logging.log4j</groupId>-->
-<!--				<artifactId>log4j-to-slf4j</artifactId>-->
-<!--				<version>999-not-exist</version>-->
-<!--			</dependency>-->
-			<!-- log4j排除 end -->
-
-			<dependency>
-				<groupId>com.aliyun.odps</groupId>
-				<artifactId>odps-sdk-core</artifactId>
-				<version>0.46.2</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter</artifactId>
-				<version>5.11.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>5.11.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.11.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.platform</groupId>
-				<artifactId>junit-platform-commons</artifactId>
-				<version>1.11.3</version>
-				<scope>test</scope>
-			</dependency>
-
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<version>3.3.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.spockframework</groupId>
-			<artifactId>spock-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-		</dependency>
-	</dependencies>
-
-<!--	<build>-->
-<!--		<plugins>-->
-<!--&lt;!&ndash;			<plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;				<groupId>org.sonatype.plugins</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<artifactId>nexus-staging-maven-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<version>1.6.7</version>&ndash;&gt;-->
-<!--&lt;!&ndash;				<extensions>true</extensions>&ndash;&gt;-->
-<!--&lt;!&ndash;				<configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;					<serverId>ossrh</serverId>&ndash;&gt;-->
-<!--&lt;!&ndash;					<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>&ndash;&gt;-->
-<!--&lt;!&ndash;					<autoReleaseAfterClose>true</autoReleaseAfterClose>&ndash;&gt;-->
-<!--&lt;!&ndash;				</configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;			</plugin>&ndash;&gt;-->
-
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-source-plugin</artifactId>-->
-<!--				<version>2.2.1</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>attach-sources</id>-->
-<!--						<goals>-->
-<!--							<goal>jar-no-fork</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-javadoc-plugin</artifactId>-->
-<!--				<version>2.9.1</version>-->
-<!--&lt;!&ndash;				<executions>&ndash;&gt;-->
-<!--&lt;!&ndash;					<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;						<id>attach-javadocs</id>&ndash;&gt;-->
-<!--&lt;!&ndash;						<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goal>jar</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;						</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;					</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;				</executions>&ndash;&gt;-->
-<!--			</plugin>-->
-
-<!--&lt;!&ndash;			<plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;				<groupId>org.apache.maven.plugins</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<artifactId>maven-gpg-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<version>1.5</version>&ndash;&gt;-->
-<!--&lt;!&ndash;				<executions>&ndash;&gt;-->
-<!--&lt;!&ndash;					<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;						<id>sign-artifacts</id>&ndash;&gt;-->
-<!--&lt;!&ndash;						<phase>verify</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;						<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goal>sign</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;						</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;					</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;				</executions>&ndash;&gt;-->
-<!--&lt;!&ndash;			</plugin>&ndash;&gt;-->
-
-
-<!--&lt;!&ndash;			<plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;				<groupId>org.codehaus.mojo</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<artifactId>flatten-maven-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;				<version>${flatten-maven-plugin.version}</version>&ndash;&gt;-->
-<!--&lt;!&ndash;				<executions>&ndash;&gt;-->
-<!--&lt;!&ndash;					<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;						<id>flatten</id>&ndash;&gt;-->
-<!--&lt;!&ndash;						<phase>process-resources</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;						<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goal>flatten</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;						</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;						<configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;							<updatePomFile>true</updatePomFile>&ndash;&gt;-->
-<!--&lt;!&ndash;							<flattenMode>ossrh</flattenMode>&ndash;&gt;-->
-<!--&lt;!&ndash;							<pomElements>&ndash;&gt;-->
-<!--&lt;!&ndash;								<distributionManagement>remove</distributionManagement>&ndash;&gt;-->
-<!--&lt;!&ndash;								<dependencyManagement>remove</dependencyManagement>&ndash;&gt;-->
-<!--&lt;!&ndash;								<repositories>remove</repositories>&ndash;&gt;-->
-<!--&lt;!&ndash;								<scm>keep</scm>&ndash;&gt;-->
-<!--&lt;!&ndash;								<url>keep</url>&ndash;&gt;-->
-<!--&lt;!&ndash;								<organization>resolve</organization>&ndash;&gt;-->
-<!--&lt;!&ndash;							</pomElements>&ndash;&gt;-->
-<!--&lt;!&ndash;						</configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;					</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;					<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;						<id>clean</id>&ndash;&gt;-->
-<!--&lt;!&ndash;						<phase>clean</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;						<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goal>clean</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;						</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;					</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;				</executions>&ndash;&gt;-->
-<!--&lt;!&ndash;			</plugin>&ndash;&gt;-->
-<!--		</plugins>-->
-<!--		<pluginManagement>-->
-<!--			<plugins>-->
-<!--				<plugin>-->
-<!--					<groupId>org.apache.maven.plugins</groupId>-->
-<!--					<artifactId>maven-antrun-plugin</artifactId>-->
-<!--					<version>${maven-antrun.version}</version>-->
-<!--				</plugin>-->
-<!--				<plugin>-->
-<!--					<groupId>org.apache.maven.plugins</groupId>-->
-<!--					<artifactId>maven-surefire-plugin</artifactId>-->
-<!--					<version>${maven-surefire-plugin.version}</version>-->
-<!--				</plugin>-->
-
-<!--&lt;!&ndash;				<plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;					<groupId>com.mycila</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;					<artifactId>license-maven-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;					<version>3.0</version>&ndash;&gt;-->
-<!--&lt;!&ndash;					<configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;						<header>${project.basedir}/license-header.txt</header>&ndash;&gt;-->
-<!--&lt;!&ndash;						<includes>&ndash;&gt;-->
-<!--&lt;!&ndash;							<include>**/*.java</include>&ndash;&gt;-->
-<!--&lt;!&ndash;						</includes>&ndash;&gt;-->
-<!--&lt;!&ndash;					</configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;					<executions>&ndash;&gt;-->
-<!--&lt;!&ndash;						<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;							<id>format-license</id>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;								<goal>format</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;							</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;						</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;						<execution>&ndash;&gt;-->
-<!--&lt;!&ndash;							<id>check-license</id>&ndash;&gt;-->
-<!--&lt;!&ndash;							<goals>&ndash;&gt;-->
-<!--&lt;!&ndash;								<goal>check</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;							</goals>&ndash;&gt;-->
-<!--&lt;!&ndash;						</execution>&ndash;&gt;-->
-<!--&lt;!&ndash;					</executions>&ndash;&gt;-->
-<!--&lt;!&ndash;				</plugin>&ndash;&gt;-->
-<!--			</plugins>-->
-<!--		</pluginManagement>-->
-<!--	</build>-->
-
-<!--	<profiles>-->
-<!--		<profile>-->
-<!--			<id>javadoc</id>-->
-<!--			<activation>-->
-<!--				<activeByDefault>false</activeByDefault>-->
-<!--			</activation>-->
-<!--			<build>-->
-<!--				<plugins>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-javadoc-plugin</artifactId>-->
-<!--						<version>${maven-javadoc-plugin.version}</version>-->
-<!--						<configuration>-->
-<!--							<excludePackageNames>-->
-<!--								com.alibaba.langengine.*-->
-<!--							</excludePackageNames>-->
-<!--							<detectJavaApiLink>false</detectJavaApiLink>-->
-<!--							<doclint>none</doclint>-->
-<!--							<quiet>true</quiet>-->
-<!--						</configuration>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>generate-javadocs</id>-->
-<!--								<phase>package</phase>-->
-<!--								<goals>-->
-<!--									<goal>jar</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--							<execution>-->
-<!--								<id>generate-aggregate-javadocs</id>-->
-<!--								<phase>package</phase>-->
-<!--								<goals>-->
-<!--									<goal>aggregate</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--				</plugins>-->
-<!--			</build>-->
-<!--		</profile>-->
-<!--	</profiles>-->
 
 </project>

@@ -23,12 +23,12 @@ from typing import AsyncGenerator
 
 from google.adk.models import LlmRequest, LlmResponse, BaseLlm
 
-from src.ali_agentic_adk_python.core.common.role import Role
-from src.ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
+from ali_agentic_adk_python.core.common.role import Role
+from ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
 from openai import OpenAI
 import json
 
-from src.ali_agentic_adk_python.core.utils.dashscope_message_convert_utils import DashscopeMessageConverter
+from ali_agentic_adk_python.core.utils.dashscope_message_convert_utils import DashscopeMessageConverter
 
 
 class BailianLLM(BaseLlm):

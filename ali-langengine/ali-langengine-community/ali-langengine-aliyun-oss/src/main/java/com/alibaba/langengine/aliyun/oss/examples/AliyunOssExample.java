@@ -3,8 +3,8 @@ package com.alibaba.langengine.aliyun.oss.examples;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.langengine.aliyun.oss.tool.AliyunOssListObjectsTool;
 import com.alibaba.langengine.aliyun.oss.tool.AliyunOssPresignedDownloadTool;
-import com.alibaba.langengine.core.model.ExecutionContext;
-import com.alibaba.langengine.core.model.ToolExecuteResult;
+import com.alibaba.langengine.core.callback.ExecutionContext;
+import com.alibaba.langengine.core.tool.ToolExecuteResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class AliyunOssExample {
         listArgs.put("bucket", bucket);
         listArgs.put("max_keys", 10);
         ToolExecuteResult listRes = new AliyunOssListObjectsTool().run(JSON.toJSONString(listArgs), new ExecutionContext());
-        System.out.println("list_objects => " + (listRes.isSuccess() ? listRes.getData() : listRes.getMessage()));
+        System.out.println("list_objects => " + listRes.getOutput());
 
         // 预签名下载
         if (key != null) {
@@ -40,7 +40,7 @@ public class AliyunOssExample {
             dlArgs.put("key", key);
             dlArgs.put("expires_seconds", 300);
             ToolExecuteResult dlRes = new AliyunOssPresignedDownloadTool().run(JSON.toJSONString(dlArgs), new ExecutionContext());
-            System.out.println("presigned_download => " + (dlRes.isSuccess() ? dlRes.getData() : dlRes.getMessage()));
+            System.out.println("presigned_download => " + dlRes.getOutput());
         }
     }
 }

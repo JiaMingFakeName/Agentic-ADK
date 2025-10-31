@@ -73,3 +73,9 @@ maven-metadata-*.xml
 *.jar
 *.war
 *.ear
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env

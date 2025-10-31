@@ -11,6 +11,8 @@
     </parent>
 
     <artifactId>ali-langengine-youdao-translate</artifactId>
+    <packaging>jar</packaging>
+    <name>ali-langengine-youdao-translate</name>
 
     <dependencies>
         <dependency>

@@ -93,32 +93,32 @@ Built on Alibaba's SmartEngine workflow engine, it utilizes RxJava3 to implement
 │                       Runner (Execution Entry)                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │                    Pipeline Processing Layer                        │
-│  ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
-│  │ Agent       │  │  ...           │  │  Custom Processing      │  │
-│  │ Execution   │  │                │  │  Pipeline               │  │
-│  │   Pipe      │  │                │  │                         │  │
-│  └─────────────┘  └────────────────┘  └─────────────────────────┘  │
+│   ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
+│   │ Agent       │  │  ...           │  │  Custom Processing      │  │
+│   │ Execution   │  │                │  │  Pipeline               │  │
+│   │   Pipe      │  │                │  │                         │  │
+│   └─────────────┘  └────────────────┘  └─────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                    Flow Engine Layer                                │
-│  ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
-│  │ FlowCanvas  │  │                │  │                         │  │
-│  │ (Flow       │  │    FlowNode    │  │  DelegationExecutor     │  │
-│  │ Container)  │  │                │  │                         │  │
-│  └─────────────┘  └────────────────┘  └─────────────────────────┘  │
+│   ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
+│   │ FlowCanvas  │  │                │  │                         │  │
+│   │ (Flow       │  │    FlowNode    │  │  DelegationExecutor     │  │
+│   │ Container)  │  │                │  │                         │  │
+│   └─────────────┘  └────────────────┘  └─────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                    AI Capability Abstraction Layer                  │
-│  ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
-│  │  BasicLlm   │  │    BaseTool    │  │        BaseCondition    │  │
-│  │ (LLM Model) │  │   (Tool Set)   │  │  (Conditional Judgment) │  │
-│  └─────────────┘  └────────────────┘  └─────────────────────────┘  │
+│   ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
+│   │  BasicLlm   │  │    BaseTool    │  │        BaseCondition    │  │
+│   │ (LLM Model) │  │   (Tool Set)   │  │  (Conditional Judgment) │  │
+│   └─────────────┘  └────────────────┘  └─────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                    Infrastructure Layer                             │
-│  ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
-│  │ SmartEngine │  │   RxJava3      │  │  Spring Framework       │  │
-│  │ (Workflow   │  │ (Reactive      │  │  (Dependency Injection  │  │
-│  │ Engine)     │  │ Programming    │  │  Framework)             │  │
-│  │             │  │ Framework)     │  │                         │  │
-│  └─────────────┘  └────────────────┘  └─────────────────────────┘  │
+│   ┌─────────────┐  ┌────────────────┐  ┌─────────────────────────┐  │
+│   │ SmartEngine │  │   RxJava3      │  │  Spring Framework       │  │
+│   │ (Workflow   │  │ (Reactive      │  │  (Dependency Injection  │  │
+│   │ Engine)     │  │ Programming    │  │  Framework)             │  │
+│   │             │  │ Framework)     │  │                         │  │
+│   └─────────────┘  └────────────────┘  └─────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -164,9 +164,9 @@ The framework supports three execution modes:
 
 ## Usage Guide and Examples
 
-[Detailed Usage Guide](./ali-agentic-adk-core/README.md#usage-guide)
+[Detailed Usage Guide (Java)](ali-agentic-adk-java/ali-agentic-adk-core/README.md#usage-guide)
 
-[DeepSearchAgent Code Example](ali-agentic-adk-java/ali-agentic-adk-extension/ali-agentic-example/src/test/java/com/alibaba/agentic/example/DeepSearchAgentTest.java)
+[DeepSearchAgent Code Example (Java)](ali-agentic-adk-java/ali-agentic-adk-extension/ali-agentic-example/src/test/java/com/alibaba/agentic/example/DeepSearchAgentTest.java)
 
 ## License
 

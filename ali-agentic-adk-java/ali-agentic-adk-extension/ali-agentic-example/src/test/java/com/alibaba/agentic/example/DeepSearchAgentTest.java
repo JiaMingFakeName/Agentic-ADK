@@ -156,6 +156,136 @@ public class DeepSearchAgentTest {
         System.out.println("count:" + count);
     }
 
+    /**
+     * 测试简单问题的回答能力
+     * 验证代理能够直接回答不需要搜索的简单问题
+     */
+    @Test
+    public void testSimpleQuestionAnswering() {
+        DeepSearchAgent deepSearchAgent = new DeepSearchAgent();
+        MyLlm myLlm = new MyLlm();
+        
+        DelegationLlm.register(myLlm);
+        DelegationTool.register(deepSearchAgent);
+
+        FlowCanvas flowCanvas = new FlowCanvas();
+
+        ToolFlowNode deepSearchNode = new ToolFlowNode(null, deepSearchAgent);
+        deepSearchNode.setId(NodeId.deepSearchAgent.name());
+
+        FlowNode llmNode = new LlmFlowNode(new LlmRequest()
+                .setModel("myLlm")
+                .setModelName("qwen3-235b-a22b"))
+                .setId(NodeId.llmNode.name())
+                .setNext(deepSearchNode);
+
+        flowCanvas.setRoot(deepSearchNode
+                .nextOnCondition(
+                        List.of(
+                                new ConditionalContainer() {
+                                    @Override
+                                    public Boolean eval(SystemContext systemContext) {
+                                        return Action.think.equals(action);
+                                    }
+                                }.setFlowNode(llmNode)
+                        )
+                ));
+
+        // 重置计数器和状态
+        count = 0;
+        preNode = null;
+        action = null;
+        context.clear();
+        badRequests.clear();
+
+        Flowable<Result> flowable = new Runner().run(flowCanvas, new Request()
+                .setInvokeMode(InvokeMode.SYNC)
+                .setParam(Map.of("query", "什么是人工智能?")));
+        
+        flowable.blockingIterable().forEach(event -> System.out.println(String.format("Simple question result: %s", event)));
+        System.out.println("Simple question count:" + count);
+    }
+
+    /**
+     * 测试搜索评估功能
+     * 验证代理能够评估搜索结果的质量并记录不良请求
+     */
+    @Test
+    public void testSearchEvaluation() {
+        Evaluator evaluator = new Evaluator();
+        DelegationLlm.register(evaluator);
+
+        // 模拟搜索结果
+        Map<String, Object> searchResult = new HashMap<>();
+        searchResult.put("query", "人工智能定义");
+        searchResult.put("text", "人工智能是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。");
+
+        // 创建系统上下文并设置搜索结果
+        SystemContext systemContext = new SystemContext();
+        // 这里需要模拟系统上下文的设置，实际测试中可能需要使用Mock框架
+
+        // 重置计数器
+        count = 0;
+        
+        LlmRequest llmRequest = new LlmRequest()
+                .setModel("evaluator")
+                .setModelName("qwen3-235b-a22b");
+
+        // 测试评估器的调用
+        Flowable<LlmResponse> responseFlowable = evaluator.invoke(llmRequest, systemContext);
+        
+        responseFlowable.blockingIterable().forEach(response -> {
+            System.out.println("Evaluator response: " + response);
+        });
+        
+        System.out.println("Bad requests recorded: " + badRequests.size());
+    }
+
+    /**
+     * 测试解析LLM结果功能
+     * 验证DeepSearchAgent能够正确解析来自LLM的不同类型响应
+     */
+    @Test
+    public void testParseLlmResult() {
+        DeepSearchAgent agent = new DeepSearchAgent();
+        
+        // 测试搜索动作解析
+        String searchResponse = "<action-search>{\"query\": \"人工智能最新发展\"}</action-search>";
+        Tuple2<Action, String> searchResult = agent.parseLlmResult(searchResponse);
+        assert Action.search.equals(searchResult.getV1());
+        assert "人工智能最新发展".equals(searchResult.getV2());
+
+        // 测试思考动作解析
+        String thinkResponse = "<action-reflect>需要进一步思考这个问题</action-reflect>";
+        Tuple2<Action, String> thinkResult = agent.parseLlmResult(thinkResponse);
+        assert Action.think.equals(thinkResult.getV1());
+
+        // 测试直接结果解析
+        String directResponse = "这是直接的答案";
+        Tuple2<Action, String> directResult = agent.parseLlmResult(directResponse);
+        assert Action.result.equals(directResult.getV1());
+        assert "这是直接的答案".equals(directResult.getV2());
+        
+        System.out.println("Parse LLM result test passed");
+    }
+
+    /**
+     * 测试循环限制功能
+     * 验证代理在达到最大迭代次数时能正确抛出异常
+     */
+    @Test(expected = RuntimeException.class)
+    public void testMaxIterationLimit() {
+        // 设置计数器接近限制
+        count = max;
+        
+        DeepSearchAgent agent = new DeepSearchAgent();
+        MyLlm llm = new MyLlm();
+        Evaluator evaluator = new Evaluator();
+        
+        // 尝试再次执行应该抛出异常
+        SystemContext context = new SystemContext();
+        agent.run(new HashMap<>(), context).blockingFirst();
+    }
 
     // DeepSearch 主agent
     public static class DeepSearchAgent implements BaseTool {

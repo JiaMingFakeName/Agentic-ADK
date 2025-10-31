@@ -25,24 +25,36 @@ from google.adk.models import LlmRequest, LlmResponse, BaseLlm
 from google.genai.types import FunctionCall
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
-from src.ali_agentic_adk_python.core.common.role import Role
+from ali_agentic_adk_python.core.common.role import Role
 from dashscope.aigc.generation import GenerationResponse
 from dashscope.aigc import Generation
 import dashscope
 from google.genai import types
-from src.ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
+from ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
 from openai import OpenAI
 import json
 
-from src.ali_agentic_adk_python.core.utils.dashscope_message_convert_utils import DashscopeMessageConverter
+from ali_agentic_adk_python.config import DashScopeSettings
+from ali_agentic_adk_python.core.utils.dashscope_message_convert_utils import DashscopeMessageConverter
 
 
 class DashscopeLLM(BaseLlm):
-    def __init__(self, api_key: str, model: str):
-        super().__init__(model= model)
+    def __init__(self, api_key: str, model: str, *, base_url: str | None = None):
+        super().__init__(model=model)
         self._api_key = api_key
-        self._base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        self._base_url = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
         self._client = OpenAI(api_key=self._api_key, base_url=self._base_url)
+
+    @classmethod
+    def from_settings(
+        cls, settings: DashScopeSettings, *, model: str | None = None
+    ) -> "DashscopeLLM":
+        model_name = model or settings.default_model
+        return cls(
+            api_key=settings.api_key_value,
+            model=model_name,
+            base_url=settings.base_url,
+        )
 
     async def generate_content_async(
       self, llm_request: LlmRequest, stream: bool = False
@@ -74,7 +86,5 @@ class DashscopeLLM(BaseLlm):
 
     def get_api_key(self):
         return self._api_key
-
-
 
 

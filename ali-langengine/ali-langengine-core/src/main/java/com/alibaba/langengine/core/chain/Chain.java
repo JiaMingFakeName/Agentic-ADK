@@ -129,10 +129,15 @@ public abstract class Chain extends Runnable<RunnableInput, RunnableOutput> {
         return chat(question, executionContext, null, extraAttributes);
     }
 
+    /**
+     * Start a chat with streaming consumer. By default maps the single user prompt to both
+     * keys: "question" and "input" for broader chain compatibility.
+     */
     public String chat(String question, ExecutionContext executionContext, Consumer<String> consumer) {
         Map<String, Object> inputs = new HashMap<>();
         inputs.put("question", question);
-        inputs.put("input", question); // TODO 需要动态填充
+        // 默认将 question 映射为 input，便于兼容依赖 input 的下游链条
+        inputs.put("input", question);
         return chat(question, executionContext, consumer, new HashMap<>());
     }
 
@@ -140,7 +145,8 @@ public abstract class Chain extends Runnable<RunnableInput, RunnableOutput> {
         Map<String, Object> extraAttributes) {
         Map<String, Object> inputs = new HashMap<>();
         inputs.put("question", question);
-        inputs.put("input", question); // TODO 需要动态填充
+        // 默认将 question 映射为 input，便于兼容依赖 input 的下游链条
+        inputs.put("input", question);
         Map<String, Object> response = run(inputs, executionContext, consumer, extraAttributes);
         return (String)response.get("text");
     }

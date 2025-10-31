@@ -11,6 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ali-langengine-qdrant</artifactId>
+    <packaging>jar</packaging>
+    <name>ali-langengine-qdrant</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

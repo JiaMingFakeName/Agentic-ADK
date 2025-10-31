@@ -38,17 +38,17 @@ public class ZhihuConfiguration {
     /**
      * 知乎请求超时时间（秒）
      */
-    public static final Integer ZHIHU_TIMEOUT = WorkPropertiesUtils.get("zhihu_timeout", 30);
+    public static final Integer ZHIHU_TIMEOUT = Integer.valueOf(WorkPropertiesUtils.get("zhihu_timeout", 30));
 
     /**
      * 知乎请求重试次数
      */
-    public static final Integer ZHIHU_MAX_RETRIES = WorkPropertiesUtils.get("zhihu_max_retries", 3);
+    public static final Integer ZHIHU_MAX_RETRIES = Integer.valueOf(WorkPropertiesUtils.get("zhihu_max_retries", 3));
 
     /**
      * 知乎请求间隔时间（毫秒）
      */
-    public static final Long ZHIHU_REQUEST_INTERVAL = WorkPropertiesUtils.get("zhihu_request_interval", 1000L);
+    public static final Long ZHIHU_REQUEST_INTERVAL = Long.valueOf(WorkPropertiesUtils.get("zhihu_request_interval", 1000L));
 
     private ZhihuConfiguration() {
         // 工具类，不允许实例化

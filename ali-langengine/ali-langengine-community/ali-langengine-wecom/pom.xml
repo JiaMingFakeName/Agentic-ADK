@@ -3,12 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.alibaba</groupId>
-    <artifactId>ali-langengine-wecom</artifactId>
-    <version>1.2.6-202508111516</version>
-    <packaging>jar</packaging>
+    <parent>
+        <groupId>com.alibaba</groupId>
+        <artifactId>ali-langengine</artifactId>
+        <version>1.2.6-202508111516</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
+    <artifactId>ali-langengine-wecom</artifactId>
     <name>ali-langengine-wecom</name>
+    <packaging>jar</packaging>
     <description>Enterprise WeChat integration for Ali-LangEngine</description>
 
     <properties>
@@ -24,8 +28,8 @@
             <artifactId>ali-langengine-core</artifactId>
             <version>1.2.6-202508111516</version>
         </dependency>
-        
-        <!-- WxJava for WeChat Enterprise API -->
+
+        <!-- https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-cp -->
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-cp</artifactId>

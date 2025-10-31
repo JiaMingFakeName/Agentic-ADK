@@ -41,6 +41,7 @@
 		<jacoco-plugin.version>0.8.8</jacoco-plugin.version>
 		<maven-antrun.version>1.8</maven-antrun.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<moditect-maven-plugin.version>1.2.2.Final</moditect-maven-plugin.version>
 		<spring-boot.version>2.5.12</spring-boot.version>
 		<springframework.version>5.3.31</springframework.version>
 		<junit5.version>5.11.0</junit5.version>
@@ -78,12 +79,20 @@
 		<module>ali-langengine-community/ali-langengine-hologres</module>
 		<module>ali-langengine-community/ali-langengine-arangodb</module>
 		<module>ali-langengine-community/ali-langengine-adbpg</module>
+		<module>ali-langengine-community/ali-langengine-astradb</module>
 		<module>ali-langengine-community/ali-langengine-polardb</module>
 		<module>ali-langengine-community/ali-langengine-pinecone</module>
 		<module>ali-langengine-community/ali-langengine-milvus</module>
+		<module>ali-langengine-community/ali-langengine-infinity</module>
+		<module>ali-langengine-community/ali-langengine-omibase</module>
 		<module>ali-langengine-community/ali-langengine-marqo</module>
 		<module>ali-langengine-community/ali-langengine-chroma</module>
+		<module>ali-langengine-community/ali-langengine-oramasearch</module>
+		<module>ali-langengine-community/ali-langengine-hnswlib</module>
+		<module>ali-langengine-community/ali-langengine-ngt</module>
+		<module>ali-langengine-community/ali-langengine-proxima</module>
 		<module>ali-langengine-community/ali-langengine-txtai</module>
+		<module>ali-langengine-community/ali-langengine-turbopuffer</module>
 		<module>ali-langengine-community/ali-langengine-typesense</module>
 		<module>ali-langengine-community/ali-langengine-vald</module>
 		<module>ali-langengine-community/ali-langengine-tuargpg</module>
@@ -93,6 +102,7 @@
 		<module>ali-langengine-community/ali-langengine-djl</module>
 		<module>ali-langengine-community/ali-langengine-huggingface</module>
 		<module>ali-langengine-community/ali-langengine-sqlite</module>
+		<module>ali-langengine-community/ali-langengine-sqlite-vss</module>
 		<module>ali-langengine-community/ali-langengine-xingchen</module>
 		<module>ali-langengine-community/ali-langengine-xinghuo</module>
 		<module>ali-langengine-community/ali-langengine-msearch</module>
@@ -111,6 +121,7 @@
 		<module>ali-langengine-community/ali-langengine-elasticsearch</module>
 		<module>ali-langengine-community/ali-langengine-serp</module>
 		<module>ali-langengine-community/ali-langengine-pgvector</module>
+		<module>ali-langengine-community/ali-langengine-neon</module>
 		<module>ali-langengine-community/ali-langengine-mongodb</module>
 		<module>ali-langengine-community/ali-langengine-aliyunaisearch</module>
 		<module>ali-langengine-community/ali-langengine-sinanews</module>
@@ -146,6 +157,7 @@
 		<module>ali-langengine-community/ali-langengine-wenxin</module>
 		<module>ali-langengine-community/ali-langengine-douyin</module>
 		<module>ali-langengine-community/ali-langengine-zhihu</module>
+		<module>ali-langengine-community/ali-langengine-wikipedia</module>
 		<module>ali-langengine-community/ali-langengine-kagi</module>
     <module>ali-langengine-community/ali-langengine-aliyun-oss</module>
 		<module>ali-langengine-community/ali-langengine-qiniu-kodo</module>
@@ -163,11 +175,58 @@
     <module>ali-langengine-community/ali-langengine-cxxexecutor</module>
     <module>ali-langengine-community/ali-langengine-tianyancha</module>
     <module>ali-langengine-community/ali-langengine-gitcode</module>
+    <module>ali-langengine-community/ali-langengine-minio</module>
     <module>ali-langengine-community/ali-langengine-gitee</module>
     <module>ali-langengine-community/ali-langengine-dgraph</module>
     <module>ali-langengine-community/ali-langengine-nebulagraph</module>
+		<module>ali-langengine-community/ali-langengine-gmail</module>
+		<module>ali-langengine-community/ali-langengine-outlook</module>
+		<module>ali-langengine-community/ali-langengine-imap</module>
+		<module>ali-langengine-community/ali-langengine-smtp</module>
     <module>ali-langengine-community/ali-langengine-deeplake</module>
+	  <module>ali-langengine-community/ali-langengine-vearch</module>
     <module>ali-langengine-community/ali-langengine-rockset</module>
+    <module>ali-langengine-community/ali-langengine-alipay</module>
+    <module>ali-langengine-community/ali-langengine-arxiv</module>
+    <module>ali-langengine-community/ali-langengine-cassandra</module>
+    <module>ali-langengine-community/ali-langengine-deepl</module>
+    <module>ali-langengine-community/ali-langengine-dflow</module>
+    <module>ali-langengine-community/ali-langengine-dingtalk</module>
+    <module>ali-langengine-community/ali-langengine-github</module>
+    <module>ali-langengine-community/ali-langengine-googlescholar</module>
+    <module>ali-langengine-community/ali-langengine-lancedb</module>
+    <module>ali-langengine-community/ali-langengine-microsoft-translate</module>
+    <module>ali-langengine-community/ali-langengine-opensearch</module>
+    <module>ali-langengine-community/ali-langengine-pubmed</module>
+    <module>ali-langengine-community/ali-langengine-qdrant</module>
+    <module>ali-langengine-community/ali-langengine-reddit</module>
+    <module>ali-langengine-community/ali-langengine-slack</module>
+    <module>ali-langengine-community/ali-langengine-sms</module>
+    <module>ali-langengine-community/ali-langengine-tair</module>
+    <module>ali-langengine-community/ali-langengine-tencent-translate</module>
+    <module>ali-langengine-community/ali-langengine-tencentvdb</module>
+    <module>ali-langengine-community/ali-langengine-volcengine-translate</module>
+    <module>ali-langengine-community/ali-langengine-wecom</module>
+    <module>ali-langengine-community/ali-langengine-wework</module>
+    <module>ali-langengine-community/ali-langengine-youdao-translate</module>
+    <module>ali-langengine-community/ali-langengine-youtube</module>
+    <module>ali-langengine-community/ali-langengine-usearch</module>
+    <module>ali-langengine-community/ali-langengine-azuresearch</module>
+    <module>ali-langengine-community/ali-langengine-cosmosdb</module>
+    <module>ali-langengine-community/ali-langengine-cvector</module>
+    <module>ali-langengine-community/ali-langengine-hippo</module>
+    <module>ali-langengine-community/ali-langengine-greatdb</module>
+    <module>ali-langengine-community/ali-langengine-stellardb</module>
+    <module>ali-langengine-community/ali-langengine-arcneural</module>
+    <module>ali-langengine-community/ali-langengine-solr</module>
+		<module>ali-langengine-community/ali-langengine-docusign</module>
+		<module>ali-langengine-community/ali-langengine-vertexai-vectorsearch</module>
+		<module>ali-langengine-community/ali-langengine-atlas</module>
+		<module>ali-langengine-community/ali-langengine-dashvector</module>
+		<module>ali-langengine-community/ali-langengine-vectordb-rust</module>
+		<module>ali-langengine-community/ali-langengine-vectra</module>
+		<module>ali-langengine-community/ali-langengine-tile38</module>
+		<module>ali-langengine-community/ali-langengine-momento</module>
   </modules>
 
 	<dependencyManagement>
@@ -557,6 +616,11 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.moditect</groupId>
+					<artifactId>moditect-maven-plugin</artifactId>
+					<version>${moditect-maven-plugin.version}</version>
+				</plugin>
 
 <!--				<plugin>-->
 <!--					<groupId>com.mycila</groupId>-->
@@ -621,8 +685,8 @@
 								<goals>
 									<goal>aggregate</goal>
 								</goals>
-							</execution>
-						</executions>
+						</execution>
+					</executions>
 					</plugin>
 				</plugins>
 			</build>

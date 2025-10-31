@@ -16,18 +16,16 @@
 package com.alibaba.langengine.faiss.vectorstore;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.langengine.core.document.Document;
+import com.alibaba.langengine.core.indexes.Document;
 import com.alibaba.langengine.core.embeddings.Embeddings;
 import com.alibaba.langengine.core.vectorstore.VectorStore;
 import com.alibaba.langengine.faiss.FaissConfiguration;
 import com.alibaba.langengine.faiss.exception.FaissException;
-import com.alibaba.langengine.faiss.model.FaissIndex;
 import com.alibaba.langengine.faiss.model.FaissSearchResult;
 import com.alibaba.langengine.faiss.service.FaissService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,74 +85,75 @@ public class FaissVectorStore extends VectorStore {
             throw new FaissException("Failed to initialize FAISS vector store", e);
         }
     }
-    
+
+
     @Override
     public void addDocuments(List<Document> documents) {
         if (CollectionUtils.isEmpty(documents)) {
             log.warn("No documents to add");
             return;
         }
-        
+
         try {
             log.info("Adding {} documents to FAISS vector store", documents.size());
-            
+
             // 生成嵌入向量
             List<Document> embeddedDocuments = embedding.embedDocument(documents);
-            
+
             // 批量添加到FAISS索引
             List<float[]> vectors = new ArrayList<>();
             List<String> documentIds = new ArrayList<>();
-            
+
             for (Document document : embeddedDocuments) {
                 if (document.getEmbedding() != null && !document.getEmbedding().isEmpty()) {
-                    // 转换为float数组
-                    float[] vector = document.getEmbedding().stream()
-                        .mapToDouble(Double::doubleValue)
-                        .mapToObj(d -> (float) d)
-                        .collect(java.util.stream.Collectors.toList())
-                        .stream()
-                        .mapToFloat(Float::floatValue)
-                        .toArray();
-                    
+                    // 修复：使用传统循环方式转换float数组
+                    List<Double> embeddingList = document.getEmbedding();
+                    float[] vector = new float[embeddingList.size()];
+                    for (int i = 0; i < embeddingList.size(); i++) {
+                        vector[i] = embeddingList.get(i).floatValue();
+                    }
+
                     vectors.add(vector);
                     documentIds.add(document.getUniqueId());
-                    
+
                     // 更新文档缓存
                     documentCache.put(document.getUniqueId(), document);
                 }
             }
-            
+
             if (!vectors.isEmpty()) {
                 faissService.addVectors(vectors, documentIds);
                 log.info("Successfully added {} vectors to FAISS index", vectors.size());
             }
-            
+
         } catch (Exception e) {
             log.error("Failed to add documents to FAISS vector store", e);
             throw new FaissException("Failed to add documents", e);
         }
     }
-    
+
     @Override
     public List<Document> similaritySearch(String query, int k, Double maxDistanceValue, Integer type) {
         try {
             log.info("Performing similarity search for query: {}, k: {}", query, k);
-            
+
             // 生成查询向量
             List<String> embeddingStrings = embedding.embedQuery(query, 1);
             if (CollectionUtils.isEmpty(embeddingStrings) || !embeddingStrings.get(0).startsWith("[")) {
                 log.warn("Failed to generate embedding for query: {}", query);
                 return new ArrayList<>();
             }
-            
+
             List<Float> queryVectorList = JSON.parseArray(embeddingStrings.get(0), Float.class);
-            float[] queryVector = queryVectorList.stream()
-                .mapToFloat(Float::floatValue)
-                .toArray();
-            
+            // 修复：使用传统循环方式转换float数组
+            float[] queryVector = new float[queryVectorList.size()];
+            for (int i = 0; i < queryVectorList.size(); i++) {
+                queryVector[i] = queryVectorList.get(i);
+            }
+
             // 执行相似性搜索
             List<FaissSearchResult> searchResults = faissService.search(queryVector, k, maxDistanceValue);
-            
+
             // 转换为Document对象
             List<Document> documents = new ArrayList<>();
             for (FaissSearchResult result : searchResults) {
@@ -166,16 +165,15 @@ public class FaissVectorStore extends VectorStore {
                     documents.add(document);
                 }
             }
-            
+
             log.info("Found {} similar documents", documents.size());
             return documents;
-            
+
         } catch (Exception e) {
             log.error("Failed to perform similarity search", e);
             throw new FaissException("Failed to perform similarity search", e);
         }
     }
-    
     /**
      * 批量相似性搜索
      */

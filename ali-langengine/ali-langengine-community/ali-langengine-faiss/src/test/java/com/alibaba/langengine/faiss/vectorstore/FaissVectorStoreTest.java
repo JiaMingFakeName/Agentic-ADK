@@ -15,7 +15,7 @@
  */
 package com.alibaba.langengine.faiss.vectorstore;
 
-import com.alibaba.langengine.core.document.Document;
+import com.alibaba.langengine.core.indexes.Document;
 import com.alibaba.langengine.core.embeddings.Embeddings;
 import com.alibaba.langengine.faiss.exception.FaissException;
 import org.junit.After;

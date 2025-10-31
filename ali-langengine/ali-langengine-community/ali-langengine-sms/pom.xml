@@ -11,6 +11,8 @@
     </parent>
 
     <artifactId>ali-langengine-sms</artifactId>
+    <packaging>jar</packaging>
+    <name>ali-langengine-sms</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

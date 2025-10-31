@@ -1,9 +1,9 @@
 package com.alibaba.langengine.aliyun.oss.tool;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.langengine.core.model.BaseTool;
-import com.alibaba.langengine.core.model.ExecutionContext;
-import com.alibaba.langengine.core.model.ToolExecuteResult;
+import com.alibaba.langengine.core.tool.BaseTool;
+import com.alibaba.langengine.core.callback.ExecutionContext;
+import com.alibaba.langengine.core.tool.ToolExecuteResult;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class AliyunOssDeleteObjectTool extends BaseTool {
             String key = (String) args.get("key");
 
             if (accessKeyId == null || accessKeySecret == null || region == null || bucket == null || key == null) {
-                return ToolExecuteResult.fail("InvalidArgument", "missing required credentials or bucket/key");
+                return new ToolExecuteResult("InvalidArgument: " + "missing required credentials or bucket/key");
             }
 
             client = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
@@ -54,10 +54,10 @@ public class AliyunOssDeleteObjectTool extends BaseTool {
             data.put("deleted", true);
             data.put("bucket", bucket);
             data.put("key", key);
-            return ToolExecuteResult.success(data);
+            return new ToolExecuteResult(data.toString());
         } catch (Exception e) {
             log.error("AliyunOss.delete_object failed", e);
-            return ToolExecuteResult.fail("InternalError", e.getMessage());
+            return new ToolExecuteResult("InternalError" + e.getMessage());
         } finally {
             if (client != null) client.shutdown();
         }

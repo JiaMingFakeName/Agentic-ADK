@@ -21,17 +21,17 @@ public class DouyinConfiguration {
     /**
      * 抖音请求超时时间（秒）
      */
-    public static final Integer DOUYIN_TIMEOUT = WorkPropertiesUtils.get("douyin_timeout", 30);
+    public static final Integer DOUYIN_TIMEOUT = Integer.valueOf(WorkPropertiesUtils.get("douyin_timeout", 30));
 
     /**
      * 抖音请求重试次数
      */
-    public static final Integer DOUYIN_MAX_RETRIES = WorkPropertiesUtils.get("douyin_max_retries", 3);
+    public static final Integer DOUYIN_MAX_RETRIES = Integer.valueOf(WorkPropertiesUtils.get("douyin_max_retries", 3));
 
     /**
      * 抖音请求间隔时间（毫秒）
      */
-    public static final Long DOUYIN_REQUEST_INTERVAL = WorkPropertiesUtils.get("douyin_request_interval", 2000L);
+    public static final Long DOUYIN_REQUEST_INTERVAL = Long.valueOf(WorkPropertiesUtils.get("douyin_request_interval", 2000L));
 
     private DouyinConfiguration() {
         // 工具类，不允许实例化

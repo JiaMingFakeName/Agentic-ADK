@@ -11,6 +11,8 @@
     </parent>
 
     <artifactId>ali-langengine-youtube</artifactId>
+    <packaging>jar</packaging>
+    <name>ali-langengine-youtube</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

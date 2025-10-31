@@ -1,0 +1,6 @@
+com.alibaba.langengine.expedia.tool.ExpediaHotelSearchTool
+com.alibaba.langengine.expedia.tool.ExpediaHotelDetailsTool
+com.alibaba.langengine.expedia.tool.ExpediaFlightSearchTool
+com.alibaba.langengine.expedia.tool.ExpediaCarRentalSearchTool
+com.alibaba.langengine.expedia.tool.ExpediaActivitySearchTool
+com.alibaba.langengine.expedia.tool.ExpediaDestinationInfoTool

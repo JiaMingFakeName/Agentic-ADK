@@ -19,39 +19,46 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+from __future__ import annotations
+
 from typing import Optional
 
-class BrowserUseRequest():
+from pydantic import BaseModel, Field
+
+
+class BrowserUseRequest(BaseModel):
     """浏览器使用请求"""
+
     command: str
-    region_id: Optional[str] = None
+    region_id: Optional[str] = Field(default=None, alias="regionId")
     endpoint: Optional[str] = None
-    computer_resource_id: Optional[str] = None
-    timeout: Optional[int] = 30
+    computer_resource_id: Optional[str] = Field(default=None, alias="computerResourceId")
+    timeout: Optional[int] = Field(default=None, alias="timeout", ge=1)
+
+    model_config = {
+        "populate_by_name": True,
+    }
 
 
-class BrowserUseResponse():
+class BrowserUseResponse(BaseModel):
     """浏览器使用响应"""
-    is_success: bool
-    message: str
-    browser_use_output: Optional[str] = None
+
+    is_success: bool = Field(default=False, alias="isSuccess")
+    message: str = ""
+    browser_use_output: Optional[str] = Field(default=None, alias="browserUseOutput")
     dropped: Optional[int] = None
 
-    def __init__(self, is_success: bool, message: str, browser_use_output: Optional[str] = None, dropped: Optional[int] = None, **data):
-        super().__init__(
-            is_success=is_success,
-            message=message,
-            browser_use_output=browser_use_output,
-            dropped=dropped,
-            **data
-        )
-    
+    model_config = {
+        "populate_by_name": True,
+    }
+
     @classmethod
-    def success(cls, message: str = "操作成功", browser_use_output: Optional[str] = None) -> "BrowserUseResponse":
+    def success(cls, message: str = "Success", browser_use_output: Optional[str] = None,
+                dropped: Optional[int] = None) -> "BrowserUseResponse":
         """创建成功响应"""
-        return cls(is_success=True, message=message, browser_use_output=browser_use_output)
-    
+        return cls(is_success=True, message=message, browser_use_output=browser_use_output, dropped=dropped)
+
     @classmethod
-    def error(cls, message: str = "操作失败", dropped: Optional[int] = None) -> "BrowserUseResponse":
+    def error(cls, message: str = "Failed", dropped: Optional[int] = None) -> "BrowserUseResponse":
         """创建错误响应"""
         return cls(is_success=False, message=message, dropped=dropped)

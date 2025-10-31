@@ -15,7 +15,7 @@
  */
 package com.alibaba.langengine.supabase.util;
 
-import com.alibaba.langengine.core.document.Document;
+import com.alibaba.langengine.core.indexes.Document;
 import com.alibaba.langengine.supabase.model.SupabaseDocument;
 import com.alibaba.langengine.supabase.model.SupabaseSearchResult;
 

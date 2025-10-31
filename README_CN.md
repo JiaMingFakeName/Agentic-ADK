@@ -159,9 +159,9 @@ Agentic ADK 继承了 google-adk 的优秀设计，支持以下关键特性：
 
 ## 使用指南及案例
 
-[详细使用指南](./ali-agentic-adk-core/README_CN.md#使用指南)
+[详细使用指南(Java)](ali-agentic-adk-java/ali-agentic-adk-core/README_CN.md#使用指南)
 
-[DeepSearchAgent代码示例](ali-agentic-adk-java/ali-agentic-adk-extension/ali-agentic-example/src/test/java/com/alibaba/agentic/example/DeepSearchAgentTest.java)
+[DeepSearchAgent代码示例(Java)](ali-agentic-adk-java/ali-agentic-adk-extension/ali-agentic-example/src/test/java/com/alibaba/agentic/example/DeepSearchAgentTest.java)
 
 ## License
 

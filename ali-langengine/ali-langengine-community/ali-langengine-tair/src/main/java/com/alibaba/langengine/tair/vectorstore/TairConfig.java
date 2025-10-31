@@ -17,8 +17,8 @@ package com.alibaba.langengine.tair.vectorstore;
 
 import com.alibaba.langengine.core.embeddings.Embeddings;
 import com.aliyun.tair.tairvector.TairVector;
-import com.taobao.eagleeye.redis.clients.jedis.JedisPool;
-import com.taobao.eagleeye.redis.clients.jedis.JedisPoolConfig;
+import io.valkey.JedisPool;
+import io.valkey.JedisPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

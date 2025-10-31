@@ -1,9 +1,9 @@
 package com.alibaba.langengine.aliyun.oss.tool;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.langengine.core.model.BaseTool;
-import com.alibaba.langengine.core.model.ExecutionContext;
-import com.alibaba.langengine.core.model.ToolExecuteResult;
+import com.alibaba.langengine.core.tool.BaseTool;
+import com.alibaba.langengine.core.callback.ExecutionContext;
+import com.alibaba.langengine.core.tool.ToolExecuteResult;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.CannedAccessControlList;
@@ -53,10 +53,10 @@ public class AliyunOssPutObjectTextTool extends BaseTool {
             String acl = (String) args.get("acl");
 
             if (accessKeyId == null || accessKeySecret == null || region == null || bucket == null || key == null || content == null) {
-                return ToolExecuteResult.fail("InvalidArgument", "missing required credentials or bucket/key/content");
+                return new ToolExecuteResult("InvalidArgument: missing required credentials or bucket/key/content");
             }
             if (content.getBytes(StandardCharsets.UTF_8).length > 1024 * 1024) {
-                return ToolExecuteResult.fail("TooLarge", "content exceeds 1MB, please use presigned upload");
+                return new ToolExecuteResult("TooLarge: content exceeds 1MB, please use presigned upload");
             }
 
             client = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
@@ -73,10 +73,10 @@ public class AliyunOssPutObjectTextTool extends BaseTool {
             data.put("bucket", bucket);
             data.put("key", key);
             data.put("size", bytes.length);
-            return ToolExecuteResult.success(data);
+            return new ToolExecuteResult(JSON.toJSONString(data));
         } catch (Exception e) {
             log.error("AliyunOss.put_object_text failed", e);
-            return ToolExecuteResult.fail("InternalError", e.getMessage());
+            return new ToolExecuteResult("InternalError: " + e.getMessage());
         } finally {
             if (client != null) client.shutdown();
         }

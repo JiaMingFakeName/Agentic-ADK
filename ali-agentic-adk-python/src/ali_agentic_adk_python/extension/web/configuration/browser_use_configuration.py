@@ -19,12 +19,12 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from src.ali_agentic_adk_python.extension.web.dto.browser_use_properties import BrowserUseProperties
 import logging
 from alibabacloud_ecd20200930.client import Client as ecd20200930Client
 from alibabacloud_ecd20201002.client import Client as ecd20201002Client
 from alibabacloud_appstream_center20210218.client import Client as appstreamcenter20210218Client
-from alibabacloud_eds_aic20230930.client import  Client as edsaic20230930Client
+from alibabacloud_eds_aic20230930.client import Client as edsaic20230930Client
+from src.ali_agentic_adk_python.extension.web.dto.browser_use_properties import BrowserUseProperties
 from src.ali_agentic_adk_python.extension.web.utils.snowflake import StringBasedLetterSnowflake
 
 
@@ -77,6 +77,23 @@ class BrowserUseConfiguration:
         if not getattr(self.browser_use_properties, "computer_resource_id", None):
             return None
         return StringBasedLetterSnowflake(self.browser_use_properties.computer_resource_id)
+
+    def atomic_operations(self):
+        if not getattr(self.browser_use_properties, "enable", False):
+            return None
+        from src.ali_agentic_adk_python.extension.web.service.atomic_operations import AtomicOperations
+        from src.ali_agentic_adk_python.extension.web.service.ecd import EcdService
+
+        ecd_service = EcdService(self.browser_use_properties)
+        return AtomicOperations(ecd_service, self.browser_use_properties)
+
+    def app_builder_service(self):
+        operations = self.atomic_operations()
+        if operations is None:
+            return None
+        from src.ali_agentic_adk_python.extension.web.service.app_builder_service import AppBuilderService
+
+        return AppBuilderService(operations)
 
     def _create_client(self, endpoint) -> ecd20200930Client:
         from alibabacloud_tea_openapi.models import Config

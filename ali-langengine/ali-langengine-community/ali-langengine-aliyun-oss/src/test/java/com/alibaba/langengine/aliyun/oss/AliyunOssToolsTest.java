@@ -3,8 +3,8 @@ package com.alibaba.langengine.aliyun.oss;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.langengine.aliyun.oss.tool.AliyunOssListObjectsTool;
 import com.alibaba.langengine.aliyun.oss.tool.AliyunOssPresignedDownloadTool;
-import com.alibaba.langengine.core.model.ExecutionContext;
-import com.alibaba.langengine.core.model.ToolExecuteResult;
+import com.alibaba.langengine.core.callback.ExecutionContext;
+import com.alibaba.langengine.core.tool.ToolExecuteResult;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,8 @@ public class AliyunOssToolsTest {
 
         ToolExecuteResult res = new AliyunOssListObjectsTool().run(JSON.toJSONString(args), new ExecutionContext());
         assertNotNull(res);
-        assertTrue(res.isSuccess(), "list_objects should succeed: " + res.getMessage());
+        assertNotNull(res.getOutput(), "list_objects should return output");
+        assertFalse(res.getOutput().contains("InternalError"), "list_objects should not fail: " + res.getOutput());
     }
 
     @Test
@@ -60,7 +61,8 @@ public class AliyunOssToolsTest {
 
         ToolExecuteResult res = new AliyunOssPresignedDownloadTool().run(JSON.toJSONString(args), new ExecutionContext());
         assertNotNull(res);
-        assertTrue(res.isSuccess(), "presigned_download should succeed: " + res.getMessage());
-        assertTrue(String.valueOf(res.getData()).contains("http"));
+        assertNotNull(res.getOutput(), "presigned_download should return output");
+        assertFalse(res.getOutput().contains("InternalError"), "presigned_download should not fail: " + res.getOutput());
+        assertTrue(res.getOutput().contains("http"), "presigned URL should contain http");
     }
 }

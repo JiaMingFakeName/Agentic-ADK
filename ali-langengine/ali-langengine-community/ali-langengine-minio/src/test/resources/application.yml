@@ -1,0 +1,8 @@
+com:
+  alibaba:
+    langengine:
+      minio:
+        endpoint: play.min.io
+        secure: true
+        access-key: Q3AM3UQ867SPQQA43P2F
+        secret-key: zuf+tfteSlswRu7BJ86wekitnifILuB1BMtMhC

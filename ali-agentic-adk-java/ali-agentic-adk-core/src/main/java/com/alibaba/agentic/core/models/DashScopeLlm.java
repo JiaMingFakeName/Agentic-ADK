@@ -124,12 +124,14 @@ public class DashScopeLlm implements BasicLlm {
         if (InvokeMode.SSE.equals(systemContext.getInvokeMode())) {
             return invokeStream(llmRequest);
         }
+        
         GenerationParam param = GenerationParam.builder()
                 .model(llmRequest.getModelName())
                 .apiKey(getApiKey())
                 .messages(messages)
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .build();
+                
         if (llmRequest.getExtraParams() != null) {
             param.setParameters((Map<String, Object>) llmRequest.getExtraParams());
         }
@@ -139,11 +141,12 @@ public class DashScopeLlm implements BasicLlm {
                 Generation gen = new Generation();
                 GenerationResult result = gen.call(param);
                 return toLlmResponse(result);
+            } catch (ApiException | NoApiKeyException | InputRequiredException e) {
+                throw new RuntimeException("Qwen 调用失败: " + e.getMessage(), e);
             } catch (Throwable e) {
                 throw new RuntimeException("Qwen 调用失败", e);
             }
         });
-
     }
 
     public Flowable<LlmResponse> invokeStream(LlmRequest llmRequest) {
@@ -165,14 +168,23 @@ public class DashScopeLlm implements BasicLlm {
                 stream.blockingForEach(r -> emitter.onNext(toLlmResponse(r)));
                 emitter.onComplete();
             } catch (ApiException | NoApiKeyException | InputRequiredException e) {
-                emitter.onError(e);
+                log.error("Qwen 流式调用失败: {}", e.getMessage(), e);
+                emitter.onError(new RuntimeException("Qwen 流式调用失败: " + e.getMessage(), e));
+            } catch (Exception e) {
+                log.error("Qwen 流式调用失败", e);
+                emitter.onError(new RuntimeException("Qwen 流式调用失败", e));
             }
         }, BackpressureStrategy.BUFFER);
     }
 
+    @Value("${ali.agentic.adk.flownode.dashscope.apiKey:**}")
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+    
     private String getApiKey() {
-        if (apiKey == null) {
-            apiKey = PropertyConstant.dashscopeApiKey;
+        if (apiKey == null || apiKey.isEmpty()) {
+            return PropertyConstant.dashscopeApiKey;
         }
         return apiKey;
     }

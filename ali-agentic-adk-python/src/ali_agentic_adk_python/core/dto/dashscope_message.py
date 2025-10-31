@@ -19,14 +19,17 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from typing import Optional, List, Dict
+from typing import Any, Dict, List, Optional, Union
+from collections.abc import Mapping
 
-from openai.types.chat import ChatCompletionMessageFunctionToolCall
+from openai.types.chat import ChatCompletionMessageToolCall
+
+ToolCallPayload = Union[ChatCompletionMessageToolCall, Dict[str, Any]]
 
 class DashscopeMessage:
     role: str = ""
     content: str = ""
-    tool_calls: Optional[List[ChatCompletionMessageFunctionToolCall]] = None
+    tool_calls: Optional[List[ToolCallPayload]] = None
     tool_call_id: Optional[str] = None
 
 
@@ -36,7 +39,17 @@ class DashscopeMessage:
             "content": self.content
         }
         if self.tool_calls is not None:
-            result["tool_calls"] = self.tool_calls # TODO: check
+            serialized_calls: List[Dict[str, Any]] = []
+            for call in self.tool_calls:
+                if isinstance(call, Mapping):
+                    serialized_calls.append(dict(call))
+                elif hasattr(call, "model_dump"):
+                    serialized_calls.append(call.model_dump())
+                elif hasattr(call, "to_dict"):
+                    serialized_calls.append(call.to_dict())
+                else:
+                    raise TypeError(f"Unsupported tool call payload type: {type(call)!r}")
+            result["tool_calls"] = serialized_calls
         if self.tool_call_id is not None:
             result["tool_call_id"] = self.tool_call_id
         return result
@@ -65,7 +78,10 @@ class DashscopeMessage:
         return msg
 
     @staticmethod
-    def gen_assistant_msg(text: str, tool_calls: List[ChatCompletionMessageFunctionToolCall] | None) -> "DashscopeMessage":
+    def gen_assistant_msg(
+        text: str,
+        tool_calls: List[ToolCallPayload] | None,
+    ) -> "DashscopeMessage":
         msg = DashscopeMessage()
         msg.role = "assistant"
         msg.content = text

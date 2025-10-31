@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.alibaba.langengine</groupId>
+    <parent>
+        <groupId>com.alibaba</groupId>
+        <artifactId>ali-langengine</artifactId>
+        <version>1.2.6-202508111516</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
     <artifactId>ali-langengine-douyin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ali-langengine-douyin</name>
@@ -20,9 +25,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.alibaba.langengine</groupId>
+            <groupId>com.alibaba</groupId>
             <artifactId>ali-langengine-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.2.6-202508111516</version>
         </dependency>
         
         <dependency>

@@ -4,12 +4,9 @@ import com.alibaba.langengine.core.tool.ToolExecuteResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * Microsoft 翻译工具测试
@@ -41,25 +38,22 @@ class MicrosoftTranslateToolTest {
     @Test
     void testRunWithEmptyInput() {
         ToolExecuteResult result = microsoftTranslateTool.run("");
-        
-        assertFalse(result.isSuccess());
-        assertTrue(result.getError().contains("翻译文本不能为空"));
+
+        assertEquals("翻译文本不能为空", result.getOutput());
     }
 
     @Test
     void testRunWithNullInput() {
         ToolExecuteResult result = microsoftTranslateTool.run(null);
-        
-        assertFalse(result.isSuccess());
-        assertTrue(result.getError().contains("翻译文本不能为空"));
+
+        assertEquals("翻译文本不能为空", result.getOutput());
     }
 
     @Test
     void testRunWithBlankInput() {
         ToolExecuteResult result = microsoftTranslateTool.run("   ");
-        
-        assertFalse(result.isSuccess());
-        assertTrue(result.getError().contains("翻译文本不能为空"));
+
+        assertEquals("翻译文本不能为空", result.getOutput());
     }
 
     @Test

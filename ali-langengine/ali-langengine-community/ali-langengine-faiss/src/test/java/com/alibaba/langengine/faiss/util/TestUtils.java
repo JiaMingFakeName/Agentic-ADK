@@ -15,7 +15,7 @@
  */
 package com.alibaba.langengine.faiss.util;
 
-import com.alibaba.langengine.core.document.Document;
+import com.alibaba.langengine.core.indexes.Document;
 
 import java.io.File;
 import java.util.*;

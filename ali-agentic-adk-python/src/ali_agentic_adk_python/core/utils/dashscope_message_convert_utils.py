@@ -21,10 +21,10 @@
 
 from google.adk.models import LlmRequest
 import json
-from src.ali_agentic_adk_python.core.common.role import Role
+from ali_agentic_adk_python.core.common.role import Role
 from google.genai.types import Part, Content
-from src.ali_agentic_adk_python.core.dto.dashscope_message import DashscopeMessage
-from src.ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
+from ali_agentic_adk_python.core.dto.dashscope_message import DashscopeMessage
+from ali_agentic_adk_python.core.utils.dashscope_utils import DashScopeUtils
 
 class DashscopeMessageConverter:
     @staticmethod
@@ -103,4 +103,3 @@ class DashscopeMessageConverter:
             raise NotImplementedError("Only text, function_call and function_response are supported in parts.")
 
         return message
-

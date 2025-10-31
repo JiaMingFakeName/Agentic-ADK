@@ -65,21 +65,17 @@ public class PromptConverter {
     }
 
     /**
-     * TODO: 计算token长度
-     *
-     * @param text
-     * @return
+     * 估算 token 长度（近似值）。
+     * 说明：此处为轻量近似实现，按每 4 个字符约等于 1 token 粗略估算，
+     * 如需精确计算，请在上层引入具体模型的编码器（如 tiktoken）。
      */
     public static Integer tokenCounter(String text) {
         return text.length() / 4;
     }
 
     /**
-     * TODO: 优化
-     *
-     * @param text
-     * @param expectedKeys
-     * @return
+     * 从 markdown 文本中解析 JSON 并校验是否包含期望 key 集合。
+     * 若无法解析或缺少必要字段，则抛出运行时异常。
      */
     public static Map<String, Object> parseAndCheckJsonMarkdown(String text, List<String> expectedKeys) {
         Map<String, Object> jsonObj;
@@ -97,10 +93,9 @@ public class PromptConverter {
     }
 
     /**
-     * TODO: 优化
-     *
-     * @param jsonString
-     * @return
+     * 从可能包含三引号代码块的字符串中提取 JSON 内容并解析为 Map。
+     * 兼容 ```json ... ``` 或 ``` ... ``` 包裹的内容，并对部分模型输出的
+     * 冗余花括号进行裁剪。
      */
     public static Map<String, Object> parseJsonMarkdown(String jsonString) {
         String jsonStr = jsonString;
@@ -114,7 +109,7 @@ public class PromptConverter {
         //为了适配vicuna
         jsonStr = jsonStr.replaceAll("^\\{+", "{")
                 .replaceAll("\\}+$", "}");
-        Map<String, Object> parsed = com.alibaba.fastjson.JSON.parseObject(jsonStr, new TypeReference<Map>(){});
+        Map<String, Object> parsed = com.alibaba.fastjson.JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>(){});
         return parsed;
     }
 }

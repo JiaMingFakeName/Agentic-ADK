@@ -28,13 +28,17 @@ import inspect
 
 from google.genai.types import Schema, Type
 
+from ali_agentic_adk_python.config import BailianSettings
+
 
 class BailianAppTool(BaseTool):
-    app_id: str
-    prompt: str = None
-    api_key: str = None
+    app_id: Optional[str]
+    prompt: Optional[str] = None
+    api_key: Optional[str] = None
 
-    def __init__(self, name: str, description: str = ""):
+    def __init__(
+        self, name: str, description: str = "", *, settings: Optional[BailianSettings] = None
+    ):
         super().__init__(name=name, description=description)
         """Initialize the tool
 
@@ -44,6 +48,10 @@ class BailianAppTool(BaseTool):
         """
         self.self_define_param = {}
         self.skip_summarization = False
+        self.app_id = None
+        self.api_key = None
+        if settings:
+            self.apply_settings(settings)
 
     def _get_declaration(self) -> Optional[types.FunctionDeclaration]:
         declaration = types.FunctionDeclaration()
@@ -123,3 +131,15 @@ class BailianAppTool(BaseTool):
                 },
             },
         }
+
+    def apply_settings(self, settings: BailianSettings) -> None:
+        if settings.app_id:
+            self.app_id = settings.app_id
+        if settings.api_key:
+            self.api_key = settings.api_key_value
+
+    @classmethod
+    def from_settings(
+        cls, name: str, description: str = "", *, settings: BailianSettings
+    ) -> "BailianAppTool":
+        return cls(name=name, description=description, settings=settings)
