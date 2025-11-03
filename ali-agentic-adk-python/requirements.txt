@@ -13,6 +13,8 @@ replicate
 PyPDF2
 PyYAML
 python-docx
+openpyxl>=3.1.0
+python-pptx>=0.6.21
 
 # Alibaba Cloud SDKs
 alibabacloud_ecd20200930
