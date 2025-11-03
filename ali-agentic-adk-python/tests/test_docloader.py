@@ -9,15 +9,21 @@ from typing import Any, Dict, Iterable, Tuple
 import pytest
 from PyPDF2 import PdfWriter
 from docx import Document as WordDocument
+import openpyxl
+from pptx import Presentation
+from pptx.util import Inches
 
 from ali_agentic_adk_python.core import (
     Document,
+    ExcelDocLoader,
     FeishuDocLoader,
     MarkdownDocLoader,
     PDFDocLoader,
+    PPTDocLoader,
     RecursiveCharacterTextSplitter,
     TextDocLoader,
     WordDocLoader,
+    YuqueDocLoader,
 )
 
 
@@ -1201,3 +1207,392 @@ def test_metadata_null_values():
     assert doc.metadata["key2"] == ""
     assert doc.metadata["key3"] == 0
     assert doc.metadata["key4"] is False
+
+
+# ============================================================================
+# ExcelDocLoader Tests
+# ============================================================================
+
+def test_excel_doc_loader_reads_file(tmp_path):
+    """Test basic Excel file loading with CSV format"""
+    excel_path = tmp_path / "test.xlsx"
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Sheet1"
+    sheet.append(["Name", "Age", "City"])
+    sheet.append(["Alice", 30, "New York"])
+    sheet.append(["Bob", 25, "London"])
+    workbook.save(excel_path)
+    
+    loader = ExcelDocLoader(str(excel_path), output_format="csv")
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    doc = documents[0]
+    assert "Name" in doc.page_content
+    assert "Alice" in doc.page_content
+    assert doc.metadata["sheet_name"] == "Sheet1"
+    assert doc.metadata["format"] == "excel"
+
+
+def test_excel_doc_loader_markdown_format(tmp_path):
+    """Test Excel loading with markdown table format"""
+    excel_path = tmp_path / "test_md.xlsx"
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.append(["Product", "Price"])
+    sheet.append(["Apple", 1.50])
+    sheet.append(["Orange", 2.00])
+    workbook.save(excel_path)
+    
+    loader = ExcelDocLoader(str(excel_path), output_format="markdown")
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    assert "| Product | Price |" in documents[0].page_content
+    assert "|---|---|" in documents[0].page_content
+
+
+def test_excel_doc_loader_json_format(tmp_path):
+    """Test Excel loading with JSON format"""
+    excel_path = tmp_path / "test_json.xlsx"
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.append(["id", "name"])
+    sheet.append([1, "item1"])
+    sheet.append([2, "item2"])
+    workbook.save(excel_path)
+    
+    loader = ExcelDocLoader(str(excel_path), output_format="json")
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    data = json.loads(documents[0].page_content)
+    assert len(data) == 2
+    assert data[0]["id"] == "1"
+
+
+def test_excel_doc_loader_multiple_sheets(tmp_path):
+    """Test Excel file with multiple sheets"""
+    excel_path = tmp_path / "multi.xlsx"
+    workbook = openpyxl.Workbook()
+    workbook.remove(workbook.active)
+    
+    sheet1 = workbook.create_sheet("Sales")
+    sheet1.append(["Product", "Sales"])
+    sheet1.append(["A", 100])
+    
+    sheet2 = workbook.create_sheet("Inventory")
+    sheet2.append(["Item", "Stock"])
+    sheet2.append(["X", 50])
+    
+    workbook.save(excel_path)
+    
+    loader = ExcelDocLoader(str(excel_path))
+    documents = loader.load()
+    
+    assert len(documents) == 2
+    sheet_names = {doc.metadata["sheet_name"] for doc in documents}
+    assert sheet_names == {"Sales", "Inventory"}
+
+
+def test_excel_doc_loader_raises_when_path_missing():
+    """Test Excel loader raises error when no file path provided"""
+    loader = ExcelDocLoader()
+    with pytest.raises(ValueError):
+        loader.load()
+
+
+def test_excel_doc_loader_fetches_from_metadata_bytes(tmp_path):
+    """Test Excel loader with byte stream input"""
+    excel_path = tmp_path / "bytes.xlsx"
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.append(["A", "B"])
+    sheet.append([1, 2])
+    workbook.save(excel_path)
+    
+    with open(excel_path, "rb") as f:
+        excel_bytes = f.read()
+    
+    loader = ExcelDocLoader()
+    documents = loader.fetch_content({"bytes": excel_bytes})
+    
+    assert len(documents) == 1
+    assert documents[0].metadata["source"] == "stream"
+
+
+def test_excel_doc_loader_max_rows(tmp_path):
+    """Test max_rows parameter limits row processing"""
+    excel_path = tmp_path / "many_rows.xlsx"
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.append(["Col1", "Col2"])
+    for i in range(1, 101):
+        sheet.append([f"R{i}", f"V{i}"])
+    workbook.save(excel_path)
+    
+    loader = ExcelDocLoader(str(excel_path), max_rows=10)
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    line_count = len(documents[0].page_content.split("\n"))
+    assert line_count <= 11
+
+
+# ============================================================================
+# PPTDocLoader Tests
+# ============================================================================
+
+def test_ppt_doc_loader_reads_file(tmp_path):
+    """Test basic PowerPoint file loading"""
+    ppt_path = tmp_path / "test.pptx"
+    presentation = Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    
+    textbox = slide.shapes.add_textbox(
+        Inches(1), Inches(1), Inches(8), Inches(1)
+    )
+    textbox.text = "Slide Title"
+    
+    textbox2 = slide.shapes.add_textbox(
+        Inches(1), Inches(2), Inches(8), Inches(4)
+    )
+    textbox2.text = "Slide Content"
+    
+    presentation.save(str(ppt_path))
+    
+    loader = PPTDocLoader(str(ppt_path))
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    assert documents[0].metadata["slide_number"] == 1
+    assert "Slide Title" in documents[0].page_content
+    assert "Slide Content" in documents[0].page_content
+
+
+def test_ppt_doc_loader_multiple_slides(tmp_path):
+    """Test PowerPoint with multiple slides"""
+    ppt_path = tmp_path / "multi.pptx"
+    presentation = Presentation()
+    
+    for i in range(1, 4):
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+        textbox = slide.shapes.add_textbox(
+            Inches(1), Inches(1), Inches(8), Inches(1)
+        )
+        textbox.text = f"Slide {i}"
+    
+    presentation.save(str(ppt_path))
+    
+    loader = PPTDocLoader(str(ppt_path))
+    documents = loader.load()
+    
+    assert len(documents) == 3
+    assert documents[0].metadata["slide_number"] == 1
+    assert documents[2].metadata["slide_number"] == 3
+
+
+def test_ppt_doc_loader_with_notes(tmp_path):
+    """Test PowerPoint with speaker notes"""
+    ppt_path = tmp_path / "notes.pptx"
+    presentation = Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    
+    textbox = slide.shapes.add_textbox(
+        Inches(1), Inches(1), Inches(8), Inches(1)
+    )
+    textbox.text = "Main Content"
+    
+    notes_slide = slide.notes_slide
+    notes_slide.notes_text_frame.text = "Speaker notes here"
+    
+    presentation.save(str(ppt_path))
+    
+    loader = PPTDocLoader(str(ppt_path), include_notes=True)
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    assert "Main Content" in documents[0].page_content
+    assert "Speaker notes here" in documents[0].page_content
+    assert documents[0].metadata["has_notes"] is True
+
+
+def test_ppt_doc_loader_without_notes(tmp_path):
+    """Test PowerPoint without including speaker notes"""
+    ppt_path = tmp_path / "no_notes.pptx"
+    presentation = Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    
+    textbox = slide.shapes.add_textbox(
+        Inches(1), Inches(1), Inches(8), Inches(1)
+    )
+    textbox.text = "Content"
+    
+    notes_slide = slide.notes_slide
+    notes_slide.notes_text_frame.text = "Hidden notes"
+    
+    presentation.save(str(ppt_path))
+    
+    loader = PPTDocLoader(str(ppt_path), include_notes=False)
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    assert "Content" in documents[0].page_content
+    assert "Hidden notes" not in documents[0].page_content
+
+
+def test_ppt_doc_loader_raises_when_path_missing():
+    """Test PPT loader raises error when no file path provided"""
+    loader = PPTDocLoader()
+    with pytest.raises(ValueError):
+        loader.load()
+
+
+def test_ppt_doc_loader_fetches_from_metadata_bytes(tmp_path):
+    """Test PPT loader with byte stream input"""
+    ppt_path = tmp_path / "bytes.pptx"
+    presentation = Presentation()
+    slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+    textbox = slide.shapes.add_textbox(
+        Inches(1), Inches(1), Inches(8), Inches(1)
+    )
+    textbox.text = "From bytes"
+    presentation.save(str(ppt_path))
+    
+    with open(ppt_path, "rb") as f:
+        ppt_bytes = f.read()
+    
+    loader = PPTDocLoader()
+    documents = loader.fetch_content({"bytes": ppt_bytes})
+    
+    assert len(documents) == 1
+    assert documents[0].metadata["source"] == "stream"
+    assert "From bytes" in documents[0].page_content
+
+
+def test_ppt_doc_loader_empty_presentation(tmp_path):
+    """Test handling of empty PowerPoint presentation"""
+    ppt_path = tmp_path / "empty.pptx"
+    presentation = Presentation()
+    presentation.save(str(ppt_path))
+    
+    loader = PPTDocLoader(str(ppt_path))
+    documents = loader.load()
+    
+    assert len(documents) == 0
+
+
+# ============================================================================
+# YuqueDocLoader Tests
+# ============================================================================
+
+def test_yuque_doc_loader_single_document():
+    """Test loading a single Yuque document"""
+    domain = "https://www.yuque.com/api/v2"
+    responses = {
+        ("GET", f"{domain}/repos/user/repo/docs/test-doc"): {
+            "data": {
+                "id": 123,
+                "slug": "test-doc",
+                "title": "Test Document",
+                "body": "# Hello Yuque\n\nContent here.",
+                "format": "markdown",
+                "created_at": "2025-01-01T00:00:00Z",
+                "updated_at": "2025-01-02T00:00:00Z",
+                "word_count": 100,
+                "public": 1,
+            }
+        },
+    }
+    session = _StubSession(responses)
+    
+    loader = YuqueDocLoader(token="test_token", session=session)
+    loader.namespace = "user/repo"
+    loader.doc_slug = "test-doc"
+    
+    documents = loader.load()
+    
+    assert len(documents) == 1
+    doc = documents[0]
+    assert "Hello Yuque" in doc.page_content
+    assert doc.metadata["doc_slug"] == "test-doc"
+    assert doc.metadata["title"] == "Test Document"
+    assert doc.metadata["namespace"] == "user/repo"
+
+
+def test_yuque_doc_loader_repository_documents():
+    """Test loading all documents from a repository"""
+    domain = "https://www.yuque.com/api/v2"
+    responses = {
+        ("GET", f"{domain}/repos/user/repo/docs"): {
+            "data": [
+                {"slug": "doc1", "title": "Document 1"},
+                {"slug": "doc2", "title": "Document 2"},
+            ]
+        },
+        ("GET", f"{domain}/repos/user/repo/docs/doc1"): {
+            "data": {
+                "id": 1,
+                "slug": "doc1",
+                "title": "Document 1",
+                "body": "Content of doc1",
+                "format": "markdown",
+            }
+        },
+        ("GET", f"{domain}/repos/user/repo/docs/doc2"): {
+            "data": {
+                "id": 2,
+                "slug": "doc2",
+                "title": "Document 2",
+                "body": "Content of doc2",
+                "format": "markdown",
+            }
+        },
+    }
+    session = _StubSession(responses)
+    
+    loader = YuqueDocLoader(token="test_token", session=session)
+    loader.namespace = "user/repo"
+    
+    documents = loader.load()
+    
+    assert len(documents) == 2
+    assert documents[0].metadata["doc_slug"] == "doc1"
+    assert documents[1].metadata["doc_slug"] == "doc2"
+
+
+def test_yuque_doc_loader_fetches_from_metadata():
+    """Test Yuque loader with metadata-driven loading"""
+    domain = "https://www.yuque.com/api/v2"
+    responses = {
+        ("GET", f"{domain}/repos/user/repo/docs/meta-doc"): {
+            "data": {
+                "id": 999,
+                "slug": "meta-doc",
+                "title": "Meta Document",
+                "body": "Metadata test",
+                "format": "markdown",
+            }
+        },
+    }
+    session = _StubSession(responses)
+    
+    loader = YuqueDocLoader(token="test_token", session=session)
+    documents = loader.fetch_content({
+        "namespace": "user/repo",
+        "doc_slug": "meta-doc",
+        "metadata": {"category": "yuque", "custom": "value"}
+    })
+    
+    assert len(documents) == 1
+    assert documents[0].metadata["category"] == "yuque"
+    assert documents[0].metadata["custom"] == "value"
+    assert documents[0].metadata["doc_slug"] == "meta-doc"
+
+
+def test_yuque_doc_loader_empty_when_no_target():
+    """Test Yuque loader returns empty list when no target specified"""
+    loader = YuqueDocLoader(token="test_token")
+    documents = loader.load()
+    assert documents == []

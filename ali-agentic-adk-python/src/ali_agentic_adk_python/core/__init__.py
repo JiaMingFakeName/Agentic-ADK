@@ -21,11 +21,14 @@
 
 from .docloader import (
     BaseLoader,
+    ExcelDocLoader,
     FeishuDocLoader,
     MarkdownDocLoader,
     PDFDocLoader,
+    PPTDocLoader,
     TextDocLoader,
     WordDocLoader,
+    YuqueDocLoader,
 )
 from .indexes import Document
 from .text_splitter import RecursiveCharacterTextSplitter, TextSplitter
@@ -33,11 +36,14 @@ from .text_splitter import RecursiveCharacterTextSplitter, TextSplitter
 __all__ = [
     "BaseLoader",
     "Document",
+    "ExcelDocLoader",
     "FeishuDocLoader",
     "MarkdownDocLoader",
     "PDFDocLoader",
+    "PPTDocLoader",
     "RecursiveCharacterTextSplitter",
     "TextDocLoader",
     "TextSplitter",
     "WordDocLoader",
+    "YuqueDocLoader",
 ]
