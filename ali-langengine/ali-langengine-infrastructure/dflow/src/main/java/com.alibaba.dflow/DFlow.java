@@ -458,6 +458,12 @@ public abstract class DFlow<T> implements ValidClosure {
             zipper, clazz.getType());
     }
 
+    public static  DFlowZip<String> zip(DFlow<String>[] flows,
+                                        BiFunction<ContextStack, String[], String> zipper) throws DFlowConstructionException {
+        return new DFlowZip<String>(flows, new Consumer[flows.length],
+                zipper, String.class);
+    }
+
     public static <T> DFlowOr<T> any(BiFunction<ContextStack, OrResult, T> orper, Class<T> clazz, Param... params)
         throws DFlowConstructionException {
         DFlow<String>[] flows = new DFlow[params.length];
@@ -573,6 +579,13 @@ public abstract class DFlow<T> implements ValidClosure {
             , triggers.toArray(triggersa),
             orper, clazz.getType());
     }
+    public static  DFlowOr<String> any(DFlow<String>[] flows,
+                                       BiFunction<ContextStack, OrResult, String> orper) throws DFlowConstructionException {
+        Consumer<ContextStack>[] triggers = new Consumer[flows.length];
+        return new DFlowOr<String>(flows
+                , triggers,
+                orper, String.class);
+    }
 
     /**
      * @param callType 一个callType只能用在一个DFlow内
@@ -642,6 +655,18 @@ public abstract class DFlow<T> implements ValidClosure {
             .init().getEntry("_DFlow_inner_init").call(JSON.toJSONString(param) ,param.getTraceId());
     }
 
+    public static final void directRun(String param, FunctionValid init,String id) throws Exception {
+        directRun(InitParam.of(param), (FunctionValid)init,id);
+    }
+    public static final void directRun(InitParam param, FunctionValid init, String id) throws Exception {
+        if(!AbstractClosureEnabledFunction.valid(init)){
+            throw new DFlowConstructionException("function should not have closure");
+        }
+        DFlow.fromCall("_DFlow_inner_init"+id).id("_DFlow_inner_init"+id)
+                .flatMap(x->init.apply(JSON.parseObject(x, InitParam.class))).id("_DFlow_inner_wrap_inner"+id)
+                .init().getEntry("_DFlow_inner_init"+id).call(JSON.toJSONString(param) ,param.getTraceId());
+    }
+
     public static final DFlow<String> fromCall(Consumer<ContextStack> action, String callType)
         throws DFlowConstructionException {
         return new DFlowCall(callType, action);
@@ -699,6 +724,10 @@ public abstract class DFlow<T> implements ValidClosure {
     private static ThreadLocal<Boolean> isLocal = new ThreadLocal<>();
 
     public static void setLocal() { isLocal.set(true); }
+
+    private static ThreadLocal<Boolean> isDebug = new ThreadLocal<>();
+
+    public static void setDebug() { isDebug.set(true); }
 
     private static ThreadLocal<String> g_pipelineName = new ThreadLocal<>();
 
@@ -812,6 +841,10 @@ public abstract class DFlow<T> implements ValidClosure {
         }
     };
 
+    @Deprecated
+    public static void setGloablStorage(GlobalStoreInterface storeage) {
+        setGlobalStorage(storeage);
+    }
     public static void setGlobalStorage(GlobalStoreInterface storage) {
         DFlow.global = new RetryProtectedGlobalStoreInterface(storage);
     }
@@ -821,6 +854,15 @@ public abstract class DFlow<T> implements ValidClosure {
     }
 
     public static ContextStoreInterface getStorage() {
+        return storage;
+    }
+
+    /**
+     * @deprecated use getStorage
+     * @return
+     */
+    @Deprecated
+    public static ContextStoreInterface getStoreage() {
         return storage;
     }
 
@@ -853,6 +895,15 @@ public abstract class DFlow<T> implements ValidClosure {
                 storage.removeContext(traceId);
             }
         });
+    }
+
+    /**
+     * @deprecated use setStorage
+     * @param storage
+     */
+    @Deprecated
+    public static void setStoreage(ContextStoreInterface storage) {
+        setStorage(storage);
     }
 
     /**
@@ -1045,6 +1096,9 @@ public abstract class DFlow<T> implements ValidClosure {
         if (isLocal.get() != null && isLocal.get()) {
             contextStack.setLocal();
         }
+        if(isDebug.get() != null && isDebug.get()) {
+            contextStack.setDebug();
+        }
 
         //异常处理
         if (!contextStack.getStack().isEmpty()
@@ -1152,7 +1206,7 @@ public abstract class DFlow<T> implements ValidClosure {
         }
 
         if (allAsync
-            //&& !stack.isLocal()
+            && !stack.isDebug()
         ) {
             String msgId = traceId + InternalHelper.getStackIndex(stack);
             if(g_debugLog) {
@@ -1490,22 +1544,28 @@ public abstract class DFlow<T> implements ValidClosure {
 
             @Override
             public Long incr(String s) {
-                if (counter.get(s) != null) {
-                    return counter.get(s).incrementAndGet();
-                } else {
-                    counter.put(s, new AtomicLong(0));
-                    return counter.get(s).incrementAndGet();
+                AtomicLong atomic = counter.get(s);
+                if(atomic == null){
+                    atomic = new AtomicLong(0);
+                    AtomicLong existing = counter.putIfAbsent(s, atomic);
+                    if(existing != null){
+                        atomic = existing;
+                    }
                 }
+                return atomic.incrementAndGet();
             }
 
             @Override
             public Long decr(String s) {
-                if (counter.get(s) != null) {
-                    return counter.get(s).decrementAndGet();
-                } else {
-                    counter.put(s, new AtomicLong(0));
-                    return counter.get(s).decrementAndGet();
+                AtomicLong atomic = counter.get(s);
+                if(atomic == null){
+                    atomic = new AtomicLong(0);
+                    AtomicLong existing = counter.putIfAbsent(s, atomic);
+                    if(existing != null){
+                        atomic = existing;
+                    }
                 }
+                return atomic.decrementAndGet();
             }
 
             @Override
@@ -1569,7 +1629,16 @@ public abstract class DFlow<T> implements ValidClosure {
 
             @Override
             public void expireContext(String traceId) {
-                m.remove(traceId);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                        }
+                        m.remove(traceId);
+                    }
+                }).start();
             }
 
             @Override

@@ -159,6 +159,14 @@ public class ContextStack{
         global.remove("_ISLOCAL");
     }
 
+    public boolean isDebug() { return global.get("_ISDEBUG") != null;}
+    public void setDebug() {
+        global.put("_ISDEBUG",true);
+    }
+    public void unsetDebug() {
+        global.remove("_ISDEBUG");
+    }
+
     public boolean isMock(){
         return global.get("_ISMOCK") != null;
     }
@@ -246,6 +254,7 @@ public class ContextStack{
         }
         return stack.peek().getIP();
     }
+
 
 
     public static class ContextNode<T> extends HashMap<String,Object> {

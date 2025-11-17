@@ -58,7 +58,7 @@ public class DFlowFlatmap<T, R> extends AbstractDFlowWithUpstream<T,R> {
             //mapper后 context可能有变化，在触发子流前更新
             DFlow.getStorage().putContext(contextStack.getId(),contextStack);
 
-            //flatmap的下一级节点很有可能未完全初始化完毕，未初始化完时，后续链路都不能保证每台机器都有代码，要local
+            // flatmap的下一级节点很有可能未完全初始化完毕，未初始化完时，后续链路都不能保证每台机器都有代码，要local
             if(!isAllInited(getIDName(),initInnerFlow.getIDName())){
                 contextStack.setLocal();
                 getStorage().putContext(contextStack.getId(),contextStack);

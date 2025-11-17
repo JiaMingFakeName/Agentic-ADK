@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "ask": [
+      "Read(!/Users/qiuzhi/ali-agentic-adk/ali-langengine/ali-langengine-infrastructure/dflow-starter/**)",
+      "Edit(!/Users/qiuzhi/ali-agentic-adk/ali-langengine/ali-langengine-infrastructure/dflow-starter/**)"
+    ],
+    "allow": [
+      "Read(/Users/qiuzhi/ali-agentic-adk/ali-langengine/ali-langengine-infrastructure/dflow-starter/**)",
+      "Edit(/Users/qiuzhi/ali-agentic-adk/ali-langengine/ali-langengine-infrastructure/dflow-starter/**)"
+    ]
+  },
+  "memoryImport": {},
+  "monitoring": {}
+}

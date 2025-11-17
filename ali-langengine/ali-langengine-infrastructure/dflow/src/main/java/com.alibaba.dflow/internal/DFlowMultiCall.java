@@ -89,6 +89,10 @@ public class DFlowMultiCall extends DFlow<InnerList> implements Function3<Intege
         //    total = Long.valueOf(v);
         //    ;
         //}
+        if(data == null){
+            //Protect
+            data = "";
+        }
         String subValue = getGlobalStorage().get(key + i);
         if (subValue == null || "null".equals(subValue)) {
             total = getGlobalStorage().incr(key);
@@ -113,23 +117,27 @@ public class DFlowMultiCall extends DFlow<InnerList> implements Function3<Intege
                 logger.warn("Muticall not finished Yet!:"+contextStack.getId()+";index="+i+";total="+total+" out of "+callTypes.length);
             }
         }else{
-            if(total != 1){
+            if(total == callTypes.length){
+                //clean
                 logger.warn("Muticall Already finished!:"+contextStack.getId()+";"+i+";"+data);
                 //后来的增加计数后要清掉
-                getGlobalStorage().decr(key);
+                clean(contextStack);
                 return;
-            }
-            InnerList in = new InnerList();
-            List<String> re = new ArrayList<>(callTypes.length);
-            for(int j = 0; j < callTypes.length; j ++){
-                if(j == i){
-                    re.add(j,data);
-                }else{
-                    re.add(j,null);
+            }else if(total == 1){
+                InnerList in = new InnerList();
+                List<String> re = new ArrayList<>(callTypes.length);
+                for (int j = 0; j < callTypes.length; j++) {
+                    if (j == i) {
+                        re.add(j, data);
+                    } else {
+                        re.add(j, null);
+                    }
                 }
+                in.setData(re);
+                onReturn(contextStack, in);
+            }else{
+                logger.warn("Muticall is not first:"+contextStack.getId()+";"+i+";"+data);
             }
-            in.setData(re);
-            cleanAndContinue(contextStack,in);
         }
     }
 
@@ -138,6 +146,12 @@ public class DFlowMultiCall extends DFlow<InnerList> implements Function3<Intege
     }
 
     private void cleanAndContinue(ContextStack contextStack, InnerList in) throws UserException {
+        clean(contextStack);
+
+        onReturn(contextStack,in);
+    }
+
+    private void clean(ContextStack contextStack) {
         String key = buildCounterKey(contextStack);
         boolean fail = false;
         //clean is better but have to add interface to old
@@ -153,8 +167,6 @@ public class DFlowMultiCall extends DFlow<InnerList> implements Function3<Intege
         if(fail) {
             logger.warn("Multi call clean failed, may fail when reuse multicall in one session @" + getIDName());
         }
-
-        onReturn(contextStack,in);
     }
 
     @Override

@@ -47,6 +47,9 @@ public abstract class AbstractDFlowWithUpstream<T,R> extends DFlow<R> {
 
         //assert new stack is created
         Assert.isTrue(context.getName().equals(getIDName()),"Current stack is not built on onTrigger");
+        if(source.clazz == String.class){
+            return actualCall(context, (T)String.valueOf(context.getParam()));
+        }
         T result = TypeUtils.cast(context.getParam(),source.clazz, ParserConfig.getGlobalInstance());
         // TODO Array & Generic not support yet
         //T result = JSON.parseObject(context.getParam().toString(),source.clazz);

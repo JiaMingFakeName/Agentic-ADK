@@ -1,0 +1,7 @@
+#-------starter自动装配---------
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.alibaba.dflow.springboot.starter.cfg.DFlowConfig,\
+com.alibaba.dflow.springboot.starter.StarterProperties,\
+com.alibaba.dflow.springboot.starter.JedisRdbBasedContentStorage,\
+com.alibaba.dflow.springboot.starter.RedisDelayManager,\
+com.alibaba.dflow.springboot.starter.cfg.HttpResender

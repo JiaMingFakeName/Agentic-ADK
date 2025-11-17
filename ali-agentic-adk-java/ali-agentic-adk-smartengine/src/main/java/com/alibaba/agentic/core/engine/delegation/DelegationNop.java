@@ -1,0 +1,53 @@
+/**
+ * Copyright (C) 2024 AIDC-AI
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.alibaba.agentic.core.engine.delegation;
+
+import com.alibaba.agentic.core.engine.constants.PropertyConstant;
+import com.alibaba.agentic.core.executor.Request;
+import com.alibaba.agentic.core.executor.Result;
+import com.alibaba.agentic.core.executor.SystemContext;
+import com.alibaba.smart.framework.engine.context.ExecutionContext;
+import io.reactivex.rxjava3.core.Flowable;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
+@Slf4j
+public class DelegationNop extends FrameworkDelegationBase {
+
+    @Override
+    public Flowable<Result> invoke(SystemContext systemContext, Request request) throws Throwable {
+        return Flowable.just(Result.success(null));
+    }
+
+    @Override
+    public void execute(ExecutionContext executionContext) {
+        log.info("adk smart engine DelegationNop execute start/finished, nothing to do, request: {}", executionContext.getRequest());
+
+        // Nothing need to do here
+    }
+
+    @Override
+    protected Map<String, Object> generateRequest(ExecutionContext executionContext, SystemContext systemContext, String activityId) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put(PropertyConstant.NODE_SUPPORT_ASYNC, false);
+        requestMap.put(PropertyConstant.NODE_CURRENT_ACTIVITY_ID, activityId);
+        return requestMap;
+    }
+}

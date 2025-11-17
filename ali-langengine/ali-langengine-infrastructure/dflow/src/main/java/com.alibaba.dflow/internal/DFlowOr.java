@@ -175,7 +175,7 @@ public class DFlowOr<R> extends DFlow<R> implements ValidClosure{
 
                 for(int i = 0; i < res.size(); i++){
                     String s = res.get(i);
-                    if(!s.startsWith(DFLOWZIPERROR)){
+                    if(s != null && !s.startsWith(DFLOWZIPERROR)){
                         OrResult orResult = new OrResult();
                         orResult.setData(s);
                         orResult.setIndex(i);
