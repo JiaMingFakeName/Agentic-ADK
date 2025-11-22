@@ -1,4 +1,4 @@
-# 阿里智能体开发工具包-Dynamic (Ali-Agent ADK DFlow)
+# 阿里智能体开发工具包-DFlow (Ali-Agent ADK DFlow)
 
 [English Version](README-CN.md)
 
