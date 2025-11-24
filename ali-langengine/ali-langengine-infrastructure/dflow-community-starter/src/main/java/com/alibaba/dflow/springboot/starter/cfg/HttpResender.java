@@ -40,6 +40,14 @@ public class HttpResender implements RequestResender {
         // 创建 HTTP 服务器实例，监听 19890 端口
         server = HttpServer.create(new InetSocketAddress(19890), 0);
 
+        // 设置HttpServer的线程池，确保能并发处理多个请求
+        // 默认情况下HttpServer使用系统默认线程池（约200个线程），这里显式设置以便控制
+        server.setExecutor(Executors.newFixedThreadPool(100, r -> {
+            Thread t = new Thread(r, "DFlow-HttpServer-Worker");
+            t.setDaemon(true);
+            return t;
+        }));
+        
         // 设置路由，处理 /dflowcall 的 POST 请求
         server.createContext("/dflowcall", new HttpHandler() {
             @Override
